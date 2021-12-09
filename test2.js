@@ -1,10 +1,10 @@
-let fuelSums = [34, 20, 70];
+let pointInArr = (arr, point) => {
+  return arr.filter( arrPoint => {
+    if( arrPoint[0] === point[0] && arrPoint[1] === point[1]) {
+      return true;
+    }
+    return false;
+  }).length;
+};
 
-console.log(fuelSums.reduce( (min, ele) => {
-  if (ele < min) {
-    return ele;
-  } else {
-    return min;
-  }
-}, 1000000));
-
+console.log(pointInArr([[1, 2], [3, 4], [5, 6]], [5, 6]));
