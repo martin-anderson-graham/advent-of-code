@@ -1,2 +1,4 @@
-let flashRecord = [[true, false], [true, true]];
-console.log (flashRecord.reduce( (sum, row) => sum + row.reduce( (sum, ele) => sum + Number(ele) , 0) , 0));
+let arr = [1, 2, 3];
+let arr2 = [];
+arr.push(...arr2);
+console.log(arr);
