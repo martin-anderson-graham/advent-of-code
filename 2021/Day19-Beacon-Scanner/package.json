@@ -1,0 +1,14 @@
+{
+  "name": "day19-beacon-scanner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "day14.js",
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^29.2.0"
+  }
+}
