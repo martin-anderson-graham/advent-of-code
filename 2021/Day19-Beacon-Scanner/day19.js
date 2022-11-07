@@ -51,13 +51,16 @@ const findNumUniquesInGoodArrays = (goodArrays) => {
   return Object.keys(uniques).length;
 };
 
+const printArray = (arr) => {
+  console.log(arr.join("\n") + "\n")
+};
+
 const countBeacons = (inputString) => {
   let sensorArray = parseInput(inputString);
-  let goodArrays = [sensorArray.slice()];
+  let goodArrays = [sensorArray[0].slice()];
   let usedArrays = new Array(sensorArray.length).fill(false);
   usedArrays[0] = true;
   while (usedArrays.some((val) => val !== true)) {
-    // while (true) {
     for (let i = 0; i < sensorArray.length; i++) {
       if (usedArrays[i]) {
         continue;
@@ -67,13 +70,16 @@ const countBeacons = (inputString) => {
         const matchingArr = findMatchingRotation(b2, sensorArray[j]);
         if (matchingArr === -1) {
           continue;
+        } else {
+          console.log(`scanner-${i}`)
+          printArray(matchingArr)
+          usedArrays[i] = true;
+          goodArrays.push(matchingArr);
+          break;
         }
-        usedArrays[i] = true;
-        goodArrays.push(matchingArr);
-        break;
       }
     }
   }
   return findNumUniquesInGoodArrays(goodArrays);
 };
-module.exports = { countBeacons };
+module.exports = {countBeacons};
