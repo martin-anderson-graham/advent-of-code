@@ -39,3 +39,8 @@ test("part 1a", () => {
   let result = countBeacons(input1a);
   expect(result).toBe(79);
 });
+
+// test("part 1 solution", () => {
+//   let result = countBeacons(input1b);
+//   expect(result).toBe(79);
+// });

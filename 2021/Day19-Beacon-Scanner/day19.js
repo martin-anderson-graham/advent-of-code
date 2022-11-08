@@ -16,7 +16,7 @@ const findMatchingRotation = (rotationsArr, knownCorrectArr) => {
       rotPointIdx++
     ) {
       for (let bIdx = 0; bIdx < knownCorrectArr.length; bIdx++) {
-        let diffArr = generateDiffArrayFromPoint(
+        let [change, diffArr] = generateDiffArrayFromPoint(
           knownCorrectArr,
           bIdx,
           rotationsArr[rotArrIdx],
@@ -25,12 +25,12 @@ const findMatchingRotation = (rotationsArr, knownCorrectArr) => {
         let count = countOverlapping(diffArr, knownCorrectArr);
         if (count >= BEACON_LIMIT) {
           // printOverlapping(diffArr, knownCorrectArr);
-          return diffArr;
+          return [change, diffArr];
         }
       }
     }
   }
-  return -1;
+  return [0, -1];
 };
 
 const findNumUniquesInGoodArrays = (goodArrays) => {
@@ -52,7 +52,7 @@ const findNumUniquesInGoodArrays = (goodArrays) => {
 };
 
 const printArray = (arr) => {
-  console.log(arr.join("\n") + "\n")
+  console.log(arr.join("\n") + "\n");
 };
 
 const countBeacons = (inputString) => {
@@ -60,19 +60,23 @@ const countBeacons = (inputString) => {
   let goodArrays = [sensorArray[0].slice()];
   let usedArrays = new Array(sensorArray.length).fill(false);
   usedArrays[0] = true;
+  let rotatedArrays = sensorArray.map((arr) => produceRotation(arr));
   while (usedArrays.some((val) => val !== true)) {
+    console.log(usedArrays);
     for (let i = 0; i < sensorArray.length; i++) {
       if (usedArrays[i]) {
         continue;
       }
-      let b2 = produceRotation(sensorArray[i]);
       for (let j = 0; j < goodArrays.length; j++) {
-        const matchingArr = findMatchingRotation(b2, sensorArray[j]);
+        const [change, matchingArr] = findMatchingRotation(
+          rotatedArrays[i],
+          goodArrays[j]
+        );
         if (matchingArr === -1) {
           continue;
         } else {
-          console.log(`scanner-${i}`)
-          printArray(matchingArr)
+          console.log(`scanner-${i} \n matcher = ${change}`);
+          // printArray(matchingArr);
           usedArrays[i] = true;
           goodArrays.push(matchingArr);
           break;
@@ -82,4 +86,4 @@ const countBeacons = (inputString) => {
   }
   return findNumUniquesInGoodArrays(goodArrays);
 };
-module.exports = {countBeacons};
+module.exports = { countBeacons };

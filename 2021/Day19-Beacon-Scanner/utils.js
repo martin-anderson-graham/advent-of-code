@@ -49,6 +49,14 @@ const produceRotation = (beaconArr) => {
     return [-arr[0], -arr[1], arr[2]];
   };
 
+  const turnLeft = (arr) => {
+    return [arr[1], -arr[0], arr[2]];
+  };
+
+  const turnRight = (arr) => {
+    return [-arr[1], arr[0], arr[2]];
+  };
+
   const turnUp = (arr) => {
     return [arr[0], arr[2], -arr[1]];
   };
@@ -92,6 +100,27 @@ const produceRotation = (beaconArr) => {
       result[result.length - 1].push(spinClockwise(arr))
     );
   }
+
+  //now turn left from start
+  result.push(beaconArr.map((arr) => turnLeft(arr)));
+  //three clockwise spins from there
+  for (let i = 0; i < 3; i++) {
+    result.push([]);
+    result[result.length - 2].forEach((arr) =>
+      result[result.length - 1].push(spinClockwise(arr))
+    );
+  }
+
+  //now turn right from start
+  result.push(beaconArr.map((arr) => turnRight(arr)));
+  //three clockwise spins from there
+  for (let i = 0; i < 3; i++) {
+    result.push([]);
+    result[result.length - 2].forEach((arr) =>
+      result[result.length - 1].push(spinClockwise(arr))
+    );
+  }
+
   return result;
 };
 
@@ -126,7 +155,7 @@ const generateDiffArrayFromPoint = (
   const result = rotArr.map((row) => {
     return [row[0] + change[0], row[1] + change[1], row[2] + change[2]];
   });
-  return result;
+  return [change, result];
 };
 
 module.exports = {
