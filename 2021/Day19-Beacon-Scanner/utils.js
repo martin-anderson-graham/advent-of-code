@@ -1,3 +1,5 @@
+const BEACON_LIMIT = 12;
+
 const parseInput = (inputString) => {
   const lines = inputString.split("\n");
   const result = lines.reduce((acc, line) => {
@@ -152,16 +154,66 @@ const generateDiffArrayFromPoint = (
     beaconPoint[1] - targetPoint[1],
     beaconPoint[2] - targetPoint[2],
   ];
+  // if (change.some((val) => val > 2000)) {
+  //   return [false, 0, 0];
+  // }
   const result = rotArr.map((row) => {
     return [row[0] + change[0], row[1] + change[1], row[2] + change[2]];
   });
-  return [change, result];
+  return [true, change, result];
+};
+
+const printArray = (arr) => {
+  console.log(arr.join("\n") + "\n");
+};
+
+const findMatchingRotation = (rotationsArr, knownCorrectArr) => {
+  for (let rotArrIdx = 0; rotArrIdx < rotationsArr.length; rotArrIdx++) {
+    for (
+      let rotPointIdx = 0;
+      rotPointIdx < rotationsArr[rotArrIdx].length;
+      rotPointIdx++
+    ) {
+      for (let bIdx = 0; bIdx < knownCorrectArr.length; bIdx++) {
+        let [valid, change, diffArr] = generateDiffArrayFromPoint(
+          knownCorrectArr,
+          bIdx,
+          rotationsArr[rotArrIdx],
+          rotArrIdx
+        );
+        if (!valid) {
+          continue;
+        }
+        if (
+          diffArr.some((val) => val[0] === 1135) &&
+          diffArr.some((val) => val[0] === 1660)
+        ) {
+          sortBeacons(diffArr);
+          printArray(diffArr);
+        }
+        let count = countOverlapping(diffArr, knownCorrectArr);
+        if (count >= BEACON_LIMIT) {
+          // printOverlapping(diffArr, knownCorrectArr);
+          return [change, diffArr];
+        }
+      }
+    }
+  }
+  return [0, -1];
+};
+
+const sortBeacons = (beaconArr) => {
+  beaconArr.sort((a, b) => {
+    return a[0] - b[0];
+  });
 };
 
 module.exports = {
+  sortBeacons,
   produceRotation,
   parseInput,
   countOverlapping,
   printOverlapping,
   generateDiffArrayFromPoint,
+  findMatchingRotation,
 };
