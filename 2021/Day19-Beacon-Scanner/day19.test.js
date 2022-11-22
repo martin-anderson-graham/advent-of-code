@@ -1,4 +1,4 @@
-const { input1a, input1b } = require("./inputs.js");
+const {input1a, input1b} = require("./inputs.js");
 const {
   sortBeacons,
   findMatchingRotation,
@@ -6,7 +6,7 @@ const {
   countOverlapping,
   parseInput,
 } = require("./utils.js");
-const { printArray, countBeacons } = require("./day19.js");
+const {printArray, largestManhattan, countBeacons} = require("./day19.js");
 
 test("countOverlapping test", () => {
   let arr1 = [
@@ -245,18 +245,27 @@ test("matching 2 with 4", () => {
     rightBeacons
   );
 
-  console.log("change", change, "matchingArr", matchingArr);
   expect(change).toEqual([1105, -1205, 1229]);
 });
 
-test.skip("part 1a", () => {
+test("manhattanDistance", () => {
+  let result = largestManhattan([[1105, -1205, 1229], [-92, -2380, -20]])
+  expect(result).toBe(3621)
+})
+
+test("part 1a", () => {
   let sensorArray = parseInput(input1a);
-  let result = countBeacons(sensorArray);
+  let [result, changes] = countBeacons(sensorArray);
   expect(result).toBe(79);
+  let result2 = largestManhattan(changes)
+  expect(result2).toBe(3621);
 });
 
-// test("part 1 solution", () => {
-// let sensorArray = parseInput(input1a);
-//   let result = countBeacons(sensorArray);
-//   expect(result).toBe(79);
-// });
+
+test("part 1 solution", () => {
+  let sensorArray = parseInput(input1b);
+  let [result, changes] = countBeacons(sensorArray);
+  expect(result).toBe(425);
+  let result2 = largestManhattan(changes)
+  expect(result2).toBe(13354);
+});

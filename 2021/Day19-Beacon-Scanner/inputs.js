@@ -1186,4 +1186,4 @@ const input1b = `--- scanner 0 ---
 289,-838,-567
 682,-518,447`;
 
-module.exports = { input1a, input1b };
+module.exports = {input1a, input1b};

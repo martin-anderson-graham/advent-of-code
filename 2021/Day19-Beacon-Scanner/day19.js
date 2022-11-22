@@ -35,9 +35,10 @@ const countBeacons = (sensorArray) => {
   let rightBeacons = [];
   sensorArray[0].forEach((arr) => rightBeacons.push(arr));
   usedArrays[0] = true;
+  let changes = [];
   let rotatedArrays = sensorArray.map((arr) => produceRotation(arr));
-  // while (usedArrays.some((val) => val !== true)) {
-  while (usedArrays.filter((val) => val !== true).length !== 1) {
+  while (usedArrays.some((val) => val !== true)) {
+    // while (usedArrays.filter((val) => val !== true).length !== 1) {
     // console.log(usedArrays);
     for (let i = 0; i < sensorArray.length; i++) {
       if (usedArrays[i]) {
@@ -51,6 +52,7 @@ const countBeacons = (sensorArray) => {
       if (matchingArr === -1) {
         continue;
       } else {
+        changes.push(change)
         usedArrays[i] = true;
         goodArrays.push(matchingArr);
         matchingArr.forEach((arr) => {
@@ -66,17 +68,32 @@ const countBeacons = (sensorArray) => {
           }
         });
         console.log(
-          `number of matched arrays is ${
-            usedArrays.filter((val) => val).length
+          `number of matched arrays is ${usedArrays.filter((val) => val).length
           }/${sensorArray.length}`
         );
         // printArray(matchingArr);
-        break;
+        // break;
       }
     }
   }
   // printArray(rightBeacons);
-  return rightBeacons.length;
+  return [rightBeacons.length, changes];
   // return findNumUniquesInGoodArrays(goodArrays);
 };
-module.exports = { countBeacons, printArray };
+
+const manhattanDistance = (p1, p2) => {
+  return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]) + Math.abs(p1[2] - p2[2])
+}
+
+const largestManhattan = (changes) => {
+  let max = -Infinity;
+  changes.forEach(a => {
+    changes.forEach(b => {
+      if (manhattanDistance(a, b) > max) {
+        max = manhattanDistance(a, b)
+      }
+    })
+  })
+  return max
+}
+module.exports = {largestManhattan, countBeacons, printArray};

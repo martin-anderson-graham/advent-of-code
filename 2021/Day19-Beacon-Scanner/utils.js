@@ -122,7 +122,6 @@ const produceRotation = (beaconArr) => {
       result[result.length - 1].push(spinClockwise(arr))
     );
   }
-
   return result;
 };
 
@@ -154,9 +153,9 @@ const generateDiffArrayFromPoint = (
     beaconPoint[1] - targetPoint[1],
     beaconPoint[2] - targetPoint[2],
   ];
-  // if (change.some((val) => val > 2000)) {
-  //   return [false, 0, 0];
-  // }
+  if (change.some((val) => val > 2000)) {
+    return [false, 0, 0];
+  }
   const result = rotArr.map((row) => {
     return [row[0] + change[0], row[1] + change[1], row[2] + change[2]];
   });
@@ -179,18 +178,18 @@ const findMatchingRotation = (rotationsArr, knownCorrectArr) => {
           knownCorrectArr,
           bIdx,
           rotationsArr[rotArrIdx],
-          rotArrIdx
+          rotPointIdx
         );
         if (!valid) {
           continue;
         }
-        if (
-          diffArr.some((val) => val[0] === 1135) &&
-          diffArr.some((val) => val[0] === 1660)
-        ) {
-          sortBeacons(diffArr);
-          printArray(diffArr);
-        }
+        // if (
+        //   diffArr.some((val) => val[0] === 1135) &&
+        //   diffArr.some((val) => val[0] === 1660)
+        // ) {
+        //   sortBeacons(diffArr);
+        //   printArray(diffArr);
+        // }
         let count = countOverlapping(diffArr, knownCorrectArr);
         if (count >= BEACON_LIMIT) {
           // printOverlapping(diffArr, knownCorrectArr);
