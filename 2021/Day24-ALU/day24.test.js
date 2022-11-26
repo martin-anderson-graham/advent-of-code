@@ -1,7 +1,7 @@
 let {ALU} = require('./day24')
 let {input} = require('./input')
 
-test('small samples', () => {
+test.skip('small samples', () => {
   let i1 = 3
   let instructions1 = `inp x\nmul x -1`
   let comp1 = new ALU(i1, instructions1)
@@ -42,6 +42,7 @@ mod w 2`
   comp4.runProgram()
   let result = `${comp4.z}${comp4.y}${comp4.x}${comp4.w}`
   expect(result).toBe('1110')
+
 })
 
 test("part1", () => {

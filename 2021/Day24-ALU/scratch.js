@@ -17,9 +17,8 @@
 15. add num to y
 16.-- set y to x * y
 17.-- set z to z+y
-  */
-`
-inp w
+
+` inp w
 mul x 0
 add x z
 mod x 26
@@ -36,10 +35,9 @@ mul y 0
 add y w
 add y 16
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -56,10 +54,9 @@ mul y 0
 add y w
 add y 3
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -76,10 +73,9 @@ mul y 0
 add y w
 add y 2
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -96,10 +92,9 @@ mul y 0
 add y w
 add y 7
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -116,10 +111,9 @@ mul y 0
 add y w
 add y 13
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -136,10 +130,9 @@ mul y 0
 add y w
 add y 6
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -156,10 +149,9 @@ mul y 0
 add y w
 add y 10
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -176,10 +168,9 @@ mul y 0
 add y w
 add y 11
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -196,10 +187,9 @@ mul y 0
 add y w
 add y 6
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -216,10 +206,9 @@ mul y 0
 add y w
 add y 5
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z21
 mod x 26
@@ -236,10 +225,9 @@ mul y 0
 add y w
 add y 11
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -256,10 +244,9 @@ mul y 0
 add y w
 add y 4
 mul y x
-add z y
-`
-  `<F9>\0'<F10>9np w
-mul x 0
+add z y`
+
+`mul x 0
 add x z
 mod x 26
 div z 26
@@ -275,10 +262,9 @@ mul y 0
 add y w
 add y 4
 mul y x
-add z y
-`
-  `
-inp w
+add z y `
+
+`inp w
 mul x 0
 add x z
 mod x 26
@@ -295,7 +281,15 @@ mul y 0
 add y w
 add y 6
 mul y x
-add z y
-17.-- set z to z+0oooo0'lopy
-`
-17.-- set z to z + y
+add z y `
+  */
+function test(w, z, a,b,c){
+  let x = z%26+b === w ? 0 : 1;
+  z = z/a
+  z = 25*x+1 * z
+  z = x*(w+c) + z
+  return z
+}
+//steps
+// after first - z is w+16
+// after second -  
