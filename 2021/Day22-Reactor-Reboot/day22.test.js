@@ -52,18 +52,32 @@ test.skip("checkoverlap", () => {
   expect(result).toBe(true)
 });
 
-test("samples part 1 and 2", () => {
-  let rules1 = parseRules(sample1)
+test("samples part 1", () => {
+  let rules1 = parseRules(sample2)
   let r1 = computeOnLight(rules1, true)
+  expect(r1).toBe(590784)
+
+  let rules2 = parseRules(sample4)
+  let r2 = computeOnLight(rules2, true)
+  expect(r2).toBe(653798)
+
+  let rules3 = parseRules(sample3)
+  let r3 = computeOnLight(rules3, true)
+  expect(r3).toBe(474140)
+})
+
+test("samples 2", () => {
+  let rules1 = parseRules(sample1)
+  let r1 = computeOnLight(rules1)
   expect(r1).toBe(39)
 
   let rules2 = parseRules(sample3)
-  let r2 = computeOnLight(rules2, true)
+  let r2 = computeOnLight(rules2)
   expect(r2).toBe(2758514936282235)
 });
 
 test("part 2", () => {
   let rules2 = parseRules(sample4)
-  let r2 = computeOnLight(rules2, true)
-  expect(r2).toBe(1365539627578181)
+  let r2 = computeOnLight(rules2)
+  expect(r2).toBe(1257350313518866)
 });
