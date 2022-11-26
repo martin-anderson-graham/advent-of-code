@@ -171,41 +171,48 @@ let constants = [
 [ 26, -12, 6],
 ]
 
-const oneStep = (w, z, a,b,c) => {
+function solve(part1 = false){
+
+  const oneStep = (w, z, a,b,c) => {
     let x = (z%26+b === w ? 0 : 1);
     z = Math.floor(z/a)
     z = (25*x+1)* z
     z = x*(w+c) + z
     return z
-}
+  }
 
-//state: highest input
-let maxToGetState = {'0':0}
+  //state: highest input
+  let maxToGetState = {'0':0}
 
-for(let z = 0; z < 14; z++) {
-  console.log(z)
-  let newState = {}
-  Object.entries(maxToGetState).forEach(val => {
-    let state = Number(val[0])
-    if(state<10000000){
-      for(let i = 1; i < 10; i++){
-        let newNum = val[1]*10+i
-        let temp = oneStep(i, state, ...constants[z])
-        if(newState[temp]){
-          // newState[temp] = Math.max(newNum, newState[temp])
-          newState[temp] = Math.min(newNum, newState[temp])
-        } else {
-          newState[temp] = newNum 
+  for(let z = 0; z < 14; z++) {
+    // console.log(z)
+    let newState = {}
+    Object.entries(maxToGetState).forEach(val => {
+      let state = Number(val[0])
+      if(state<10000000){
+        for(let i = 1; i < 10; i++){
+          let newNum = val[1]*10+i
+          let temp = oneStep(i, state, ...constants[z])
+          if(newState[temp]){
+            if(part1){
+              newState[temp] = Math.max(newNum, newState[temp])
+            } else {
+              newState[temp] = Math.min(newNum, newState[temp])
+            } 
+          } else {
+            newState[temp] = newNum 
+          }
         }
       }
-    }
-  })
-  maxToGetState = newState
-}
+    })
+    maxToGetState = newState
+  }
 
-console.log(Object.entries(maxToGetState).filter(val => val[0]==='0'))
+  // console.log(Object.entries(maxToGetState).filter(val => val[0]==='0'))
+  return Object.entries(maxToGetState).filter(val => val[0]==='0')[0][1]
+}
 
 
 module.exports = {
-  ALU,
+  solve,
 };
