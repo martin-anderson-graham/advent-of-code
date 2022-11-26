@@ -172,9 +172,9 @@ let constants = [
 ]
 
 const oneStep = (w, z, a,b,c) => {
-    let x = z%26+b === w ? 0 : 1;
-    z = (z-z%26)/a
-    z = 25*x+1 * z
+    let x = (z%26+b === w ? 0 : 1);
+    z = Math.floor(z/a)
+    z = (25*x+1)* z
     z = x*(w+c) + z
     return z
 }
@@ -186,17 +186,25 @@ for(let z = 0; z < 14; z++) {
   console.log(z)
   let newState = {}
   Object.entries(maxToGetState).forEach(val => {
-    for(let i = 1; i < 10; i++){
-      let newNum = val[1]*10+i
-      let temp = oneStep(newNum, Number(val[0]), ...constants[z])
-      newState[temp] =newNum 
+    let state = Number(val[0])
+    if(state<10000000){
+      for(let i = 1; i < 10; i++){
+        let newNum = val[1]*10+i
+        let temp = oneStep(i, state, ...constants[z])
+        if(newState[temp]){
+          // newState[temp] = Math.max(newNum, newState[temp])
+          newState[temp] = Math.min(newNum, newState[temp])
+        } else {
+          newState[temp] = newNum 
+        }
+      }
     }
-    maxToGetState = newState
   })
+  maxToGetState = newState
 }
 
-console.log(maxToGetState)
 console.log(Object.entries(maxToGetState).filter(val => val[0]==='0'))
+
 
 module.exports = {
   ALU,
