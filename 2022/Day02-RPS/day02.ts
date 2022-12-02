@@ -2,7 +2,10 @@ const parseInput = (str: string): string[][] => {
   return str.split("\n").map((r) => r.split(" "));
 };
 
-const scores: Record<string, number> = {
+type myPlays = "X" | "Y" | "Z";
+type gamePlay = "AX" | "AY" | "AZ" | "BX" | "BY" | "BZ" | "CX" | "CY" | "CZ";
+
+const scores: Record<myPlays | gamePlay, number> = {
   X: 1,
   Y: 2,
   Z: 3,
@@ -31,7 +34,7 @@ const totalScore = (gameArrs: string[][], partNum = 1): number => {
   );
 };
 
-const scores2: Record<string, number> = {
+const scores2: Record<myPlays | gamePlay, number> = {
   X: 0,
   Y: 3,
   Z: 6,
