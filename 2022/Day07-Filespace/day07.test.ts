@@ -16,8 +16,34 @@ test("sample", () => {
   expect(res).toBe(95437);
 });
 
+xtest("troubleshooting1", () => {
+  let a = input.split("\n").filter((l) => l.slice(0, 4) === "$ cd");
+  let depth = 0;
+  let res = [];
+  console.log(a.join("\n"));
+  a.forEach((r, idx) => {
+    let arr = r.split(" ");
+    if (arr[2] === "..") {
+      depth -= 1;
+    } else {
+      depth += 1;
+    }
+    res.push(depth + " " + String(idx));
+  });
+  console.log(res.join("\n"));
+});
+
+xtest("troubleshooting", () => {
+  let i = 39;
+  let short = input.split("\n").slice(0, i).join("\n");
+  let fs = parseInput(short);
+  let res = totalSumUnderLimit(fs, 100000);
+  expect(res).toBe(10);
+});
+
 test("part1", () => {
   let fs = parseInput(input);
+  console.log(fs);
   let res = totalSumUnderLimit(fs, 100000);
   expect(res).toBe(10);
 });
