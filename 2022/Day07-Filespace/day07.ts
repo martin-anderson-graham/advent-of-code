@@ -1,5 +1,5 @@
 const parseInput = (str: string): any => {
-  let result = {};
+  let result = { "/": { subDirectories: [], files: [] } };
   let path = [];
   str.split("\n").forEach((row) => {
     let arr = row.split(" ");
@@ -13,13 +13,13 @@ const parseInput = (str: string): any => {
       }
     } else if (arr[0] === "dir") {
       let fullPath = path.join("/");
-      let parentPath = path.slice(0, path.length - 1).join("/");
-      result[fullPath] = {
-        parentDirectory: parentPath,
+      let childPath = fullPath + "/" + arr[1];
+      result[childPath] = {
+        parentDirectory: fullPath,
         files: [],
         subDirectories: [],
       };
-      result[parentPath].subDirectories.push(fullPath);
+      result[fullPath].subDirectories.push(childPath);
     } else if (Number.isInteger(Number(arr[0]))) {
       let fullPath = path.join("/");
       result[fullPath].files.push({
@@ -65,4 +65,25 @@ const totalSumUnderLimit = (fs: any, limit: number): number => {
   traverse("/");
   return sum;
 };
-export { parseInput, findDirectorySize, totalSumUnderLimit };
+
+const sizeOfDirToDelete = (fs: any, unusedTarget: number): number => {
+  findDirectorySize("/", fs);
+  let total = fs["/"].size;
+  const needToFree = unusedTarget - (70000000 - total);
+  let bestDir;
+  const traverse = (dir: string) => {
+    if (fs[dir].size >= needToFree) {
+      if (!bestDir || fs[bestDir].size >= fs[dir].size) {
+        bestDir = dir;
+      }
+    }
+    if (fs[dir].subDirectories !== undefined) {
+      fs[dir].subDirectories.forEach((dir) => {
+        traverse(dir);
+      });
+    }
+  };
+  traverse("/");
+  return fs[bestDir].size;
+};
+export { parseInput, findDirectorySize, totalSumUnderLimit, sizeOfDirToDelete };
