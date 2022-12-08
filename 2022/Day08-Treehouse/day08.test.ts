@@ -22,3 +22,9 @@ test("sample2", () => {
   let res = findBestTreeView(i);
   expect(res).toBe(8);
 });
+
+test("part2", () => {
+  let i = parseInput(input);
+  let res = findBestTreeView(i);
+  expect(res).toBe(259308);
+});

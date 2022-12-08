@@ -73,8 +73,17 @@ const countTreesThatCanBeViewed = (
   r: number,
   c: number
 ): number => {
+  if (
+    r == 0 ||
+    r === trees.length - 1 ||
+    c === 0 ||
+    c === trees[0].length - 1
+  ) {
+    return 0;
+  }
   let scoreArr: number[] = [];
   let val = trees[r][c];
+
   let count = 1;
   for (let cc = c - 1; cc >= 0; cc--) {
     if (cc === 0 || trees[r][cc] >= val) {
@@ -114,7 +123,6 @@ const countTreesThatCanBeViewed = (
       count++;
     }
   }
-  console.log(r, "-", c, "  ", scoreArr);
   return scoreArr.reduce((prod, ele) => prod * ele, 1);
 };
 
