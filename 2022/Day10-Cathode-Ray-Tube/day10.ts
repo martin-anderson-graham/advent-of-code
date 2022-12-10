@@ -93,9 +93,9 @@ class CPU {
           return r
             .map((v) => {
               if (v) {
-                return "#";
+                return "\u2588";
               } else {
-                return ".";
+                return " ";
               }
             })
             .join("");
