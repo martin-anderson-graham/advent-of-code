@@ -26,23 +26,27 @@ class CPU {
   registers: Record<string, number>;
   staging: StagedInstruction[];
   part1Total: number;
+  pixels: boolean[][];
 
   constructor() {
     this.cycle = 1;
     this.registers = { x: 1 };
     this.staging = [];
     this.part1Total = 0;
+    this.pixels = [];
   }
 
-  noop() {}
+  noop() {
+    this.updateState();
+    this.cycle += 1;
+  }
 
   add(register: string, value: number) {
-    this.staging.push({
-      op: "add",
-      register: register,
-      value: value,
-      countdown: 2,
-    });
+    this.updateState();
+    this.cycle += 1;
+    this.updateState();
+    this.registers[register] += value;
+    this.cycle += 1;
   }
 
   runCommand(int: Instruction) {
@@ -55,38 +59,49 @@ class CPU {
     }
   }
 
-  processStaging() {
-    this.staging.forEach((s) => (s.countdown -= 1));
-
-    this.staging
-      .filter((s) => s.countdown === 0)
-      .forEach((int) => {
-        if (int.op === "add") {
-          if (int.register && int.value) {
-            console.log(this.cycle, "---", this.registers.x);
-            this.registers[int.register] += int.value;
-          }
-        }
-      });
-
-    this.staging = this.staging.filter((s) => s.countdown !== 0);
-  }
-
-  updatePart1Total() {
+  updateState() {
     if ((this.cycle - 20) % 40 === 0) {
       this.part1Total += this.cycle * this.registers.x;
     }
+    let currentRow = (this.cycle % 40) - 1;
+    if (currentRow === 0) {
+      this.pixels.push([]);
+    }
+    let onOff = Math.abs(currentRow - this.registers.x) <= 1;
+    this.pixels[this.pixels.length - 1].push(onOff);
   }
 
-  runProgram(instructions: Instruction[]): number {
+  runProgram1(instructions: Instruction[]): number {
     instructions.forEach((int) => {
-      this.cycle += 1;
       this.runCommand(int);
-      this.updatePart1Total();
-      this.processStaging();
     });
 
     return this.part1Total;
+  }
+
+  renderScreen(instructions: Instruction[]) {
+    instructions.forEach((int) => {
+      this.runCommand(int);
+    });
+    this.drawScreen();
+  }
+
+  drawScreen() {
+    console.log(
+      this.pixels
+        .map((r) => {
+          return r
+            .map((v) => {
+              if (v) {
+                return "#";
+              } else {
+                return ".";
+              }
+            })
+            .join("");
+        })
+        .join("\n")
+    );
   }
 }
 

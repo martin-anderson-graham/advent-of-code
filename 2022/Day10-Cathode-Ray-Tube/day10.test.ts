@@ -12,6 +12,27 @@ test("parseInput", () => {
 test("sample", () => {
   let ints = parseInput(sample);
   let cpu = new CPU();
-  let res = cpu.runProgram(ints.slice(0, 20));
+  let res = cpu.runProgram1(ints);
   expect(res).toBe(13140);
+});
+
+test("part1", () => {
+  let ints = parseInput(input);
+  let cpu = new CPU();
+  let res = cpu.runProgram1(ints);
+  expect(res).toBe(15020);
+});
+
+test("sample2", () => {
+  let ints = parseInput(sample);
+  let cpu = new CPU();
+  let res = cpu.renderScreen(ints);
+  // expect(res).toBe(13140);
+});
+
+test("part2", () => {
+  let ints = parseInput(input);
+  let cpu = new CPU();
+  let res = cpu.renderScreen(ints);
+  // expect(res).toBe(13140);
 });
