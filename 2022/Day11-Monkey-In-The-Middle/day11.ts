@@ -71,9 +71,8 @@ const processRound = (monkeys: Monkey[], part1: boolean): void => {
       monkey.operation(current);
       if (part1) {
         current.worry = Math.floor(current.worry / 3);
-      } else {
-        current.worry = current.worry % monkey.bigMod;
       }
+      current.worry = current.worry % monkey.bigMod;
       monkey.test(current, monkeys);
     }
   });
