@@ -27,7 +27,7 @@ const parseInput = (str: string): Input => {
   };
 };
 
-const findMinimumEnergy = (input: Input): number => {
+const findMinimumEnergy = (input: Input, part1 = true): number => {
   let energyGrid: number[][] = input.grid.map((row) => {
     let res: number[] = new Array(row.length).fill(Infinity);
     return res;
@@ -37,10 +37,6 @@ const findMinimumEnergy = (input: Input): number => {
     if (energyToHere < energyGrid[r][c]) {
       energyGrid[r][c] = energyToHere;
     } else {
-      return;
-    }
-
-    if (r === input.start[0] && c === input.start[1]) {
       return;
     }
 
@@ -76,68 +72,22 @@ const findMinimumEnergy = (input: Input): number => {
   };
 
   walk(input.end[0], input.end[1], 0);
-  return energyGrid[input.start[0]][input.start[1]];
-};
 
-const findMinimumEnergyAnywhere = (input: Input): number => {
-  let energyGrid: number[][] = input.grid.map((row) => {
-    let res: number[] = new Array(row.length).fill(Infinity);
-    return res;
-  });
-
-  const walk = (r: number, c: number, energyToHere: number): void => {
-    if (energyToHere < energyGrid[r][c]) {
-      energyGrid[r][c] = energyToHere;
-    } else {
-      return;
-    }
-
-    if (r === input.start[0] && c === input.start[1]) {
-      return;
-    }
-
-    let currentHeight = input.grid[r][c];
-
-    if (
-      input.grid?.[r]?.[c + 1] !== undefined &&
-      input.grid[r][c + 1] + 1 >= currentHeight
-    ) {
-      walk(r, c + 1, energyToHere + 1);
-    }
-
-    if (
-      input.grid?.[r]?.[c - 1] !== undefined &&
-      input.grid[r][c - 1] + 1 >= currentHeight
-    ) {
-      walk(r, c - 1, energyToHere + 1);
-    }
-
-    if (
-      input.grid?.[r + 1]?.[c] !== undefined &&
-      input.grid[r + 1][c] + 1 >= currentHeight
-    ) {
-      walk(r + 1, c, energyToHere + 1);
-    }
-
-    if (
-      input.grid?.[r - 1]?.[c] !== undefined &&
-      input.grid[r - 1][c] + 1 >= currentHeight
-    ) {
-      walk(r - 1, c, energyToHere + 1);
-    }
-  };
-
-  walk(input.end[0], input.end[1], 0);
-  let min = Infinity;
-  input.grid.forEach((row, r) => {
-    row.forEach((val, c) => {
-      if (val === 0) {
-        if (energyGrid[r][c] < min) {
-          min = energyGrid[r][c];
+  if (part1) {
+    return energyGrid[input.start[0]][input.start[1]];
+  } else {
+    let min = Infinity;
+    input.grid.forEach((row, r) => {
+      row.forEach((val, c) => {
+        if (val === 0) {
+          if (energyGrid[r][c] < min) {
+            min = energyGrid[r][c];
+          }
         }
-      }
+      });
     });
-  });
-  return min;
+    return min;
+  }
 };
-export { parseInput, findMinimumEnergy, findMinimumEnergyAnywhere };
+
+export { parseInput, findMinimumEnergy };
