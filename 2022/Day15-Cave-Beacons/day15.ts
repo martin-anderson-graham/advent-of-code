@@ -62,16 +62,6 @@ const parseInput = (str: string): Input => {
       return current;
     })
     .sort((a, b) => a.col - b.col);
-  // let grid: string[][] = [];
-  // for (let i = minRow; i < maxRow + 1; i++) {
-  //   grid.push(new Array(Math.abs(maxCol) + Math.abs(minCol) + 1).fill("."));
-  //
-  // sensors.forEach((sensor) => {
-  //   grid[sensor.row + Math.abs(minRow)][sensor.col + Math.abs(minCol)] = "s";
-  //   grid[sensor.beacon.row + Math.abs(minRow)][
-  //     sensor.beacon.col + Math.abs(minCol)
-  //   ] = "b";
-  // });
 
   return {
     sensors,
