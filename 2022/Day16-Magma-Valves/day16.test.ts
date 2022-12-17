@@ -5,7 +5,7 @@ import {
   preComputeMiniPaths,
   findBestPath2,
 } from "./day16";
-
+import { part2 } from "./part2";
 test("sample", () => {
   let i = parseInput(sample);
   let res = findBestPath(i);
@@ -21,12 +21,12 @@ test("part1", () => {
 
 test("sample2", () => {
   let i = parseInput(sample);
-  let res = findBestPath2(i);
+  let res = part2(i);
   expect(res).toBe(1707);
 });
 
-xtest("part2", () => {
+test("part2", () => {
   let i = parseInput(input);
-  let res = findBestPath2(i);
-  expect(res).toBe(1707);
+  let res = part2(i);
+  expect(res).toBe(2235);
 });

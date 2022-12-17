@@ -192,34 +192,32 @@ const findBestPath2 = (rooms: Rooms): number => {
       path.yourCurrentRoom = path.yourTargetRoom;
       path.eleCurrentRoom = path.eleTargetRoom;
       let yourBestRoom = "";
-      let yourBestVal = -Infinity;
-      path.roomsToVisit.forEach((_, r) => {
-        let remainingTimeAfterMoving =
-          path.time - bestRoomPaths[`${path.yourCurrentRoom},${r}`] - 1;
-        if (remainingTimeAfterMoving * rooms[r].rate > yourBestVal) {
-          yourBestVal = remainingTimeAfterMoving * rooms[r].rate;
-          yourBestRoom = r;
-        }
-      });
       let eleBestRoom = "";
-      let eleBestVal = -Infinity;
+      let bestVal = -Infinity;
+
       path.roomsToVisit.forEach((_, r) => {
-        let remainingTimeAfterMoving =
-          path.time - bestRoomPaths[`${path.eleCurrentRoom},${r}`] - 1;
-        if (remainingTimeAfterMoving * rooms[r].rate > eleBestVal) {
-          eleBestVal = remainingTimeAfterMoving * rooms[r].rate;
-          eleBestRoom = r;
-        }
+        let yourTime =
+          path.time - bestRoomPaths[`${path.yourCurrentRoom},${r}`] - 1;
+        let yourVal = yourTime * rooms[r].rate;
+        path.roomsToVisit.forEach((_, re) => {
+          if (r === re) {
+            return;
+          }
+          let eleTime =
+            path.time - bestRoomPaths[`${path.eleCurrentRoom},${re}`] - 1;
+          let eleVal = eleTime * rooms[re].rate;
+          if (eleVal + yourVal > bestVal) {
+            bestVal = eleVal + yourVal;
+            yourBestRoom = r;
+            eleBestRoom = re;
+          }
+        });
       });
-      // console.log(yourBestRoom, yourBestVal, eleBestRoom, eleBestVal);
-      if (eleBestVal > yourBestVal) {
-        path.eleCurrentRoom = path.eleTargetRoom;
-        path.total += path.time * rooms[path.eleCurrentRoom].rate;
-        path.roomsToVisit.delete(eleBestRoom);
-        path.eleTargetRoom = eleBestRoom;
-        path.eleTravelTime =
-          bestRoomPaths[`${path.eleCurrentRoom},${path.eleTargetRoom}`] + 1;
-      }
+      path.total += path.time * rooms[path.yourCurrentRoom].rate;
+      path.roomsToVisit.delete(yourBestRoom);
+      path.yourTargetRoom = yourBestRoom;
+      path.yourTravelTime =
+        bestRoomPaths[`${path.yourCurrentRoom},${path.yourTargetRoom}`] + 1;
     }
 
     //lets try being greedy - human
@@ -268,4 +266,4 @@ const findBestPath2 = (rooms: Rooms): number => {
   walk();
   return path.total;
 };
-export { parseInput, findBestPath, preComputeMiniPaths, findBestPath2 };
+export { parseInput, Rooms, findBestPath, preComputeMiniPaths, findBestPath2 };
