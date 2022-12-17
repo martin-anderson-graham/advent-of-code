@@ -13,7 +13,7 @@ test("sample", () => {
 });
 
 //takes 3 minutes...
-xtest("part1", () => {
+test("part1", () => {
   let i = parseInput(input);
   let res = findBestPath(i);
   expect(res).toBe(2183);
@@ -21,6 +21,12 @@ xtest("part1", () => {
 
 test("sample2", () => {
   let i = parseInput(sample);
+  let res = findBestPath2(i);
+  expect(res).toBe(1707);
+});
+
+xtest("part2", () => {
+  let i = parseInput(input);
   let res = findBestPath2(i);
   expect(res).toBe(1707);
 });

@@ -1,3 +1,5 @@
+import { Queue } from "./queue";
+
 type Room = {
   rate: number;
   neighbors: string[];
@@ -28,28 +30,24 @@ const preComputeMiniPaths = (
 ): Record<string, number> => {
   let result: Record<string, number> = {};
 
-  type RoomNode = {
-    name: string;
-    value: number;
-    neighbors: string[];
-  };
-  const findMinPath = (startRoom: string, endRoom: string): void => {
-    let queue: RoomNode[] = [
-      { name: startRoom, value: 0, neighbors: rooms[startRoom].neighbors },
-    ];
+  let queue = new Queue();
 
-    while (queue.length !== 0) {
-      let current: RoomNode = queue.shift();
+  const findMinPath = (startRoom: string, endRoom: string): void => {
+    queue.reset(startRoom, 0);
+    let visited: Record<string, boolean> = {};
+    visited[startRoom] = true;
+    while (!queue.isEmpty()) {
+      let current = queue.dequeue();
       if (current.name === endRoom) {
         result[`${startRoom},${endRoom}`] = current.value;
+        result[`${endRoom},${startRoom}`] = current.value;
         return;
       } else {
-        current.neighbors.forEach((n) => {
-          queue.push({
-            name: n,
-            value: current.value + 1,
-            neighbors: rooms[n].neighbors,
-          });
+        rooms[current.name].neighbors.forEach((n) => {
+          if (!visited[n]) {
+            visited[n] = true;
+            queue.enqueue(n, current.value + 1);
+          }
         });
       }
     }
@@ -57,7 +55,7 @@ const preComputeMiniPaths = (
 
   roomsToVisit.forEach((_, key1) => {
     roomsToVisit.forEach((_, key2) => {
-      if (key1 !== key2) {
+      if (key1 !== key2 && result[`${key1},${key2}`] === undefined) {
         findMinPath(key1, key2);
       }
     });
@@ -172,10 +170,15 @@ const findBestPath2 = (rooms: Rooms): number => {
   };
 
   const walk = (): void => {
-    console.log(path.yourTargetRoom, path.eleTargetRoom);
     path.time -= 1;
     path.yourTravelTime -= 1;
     path.eleTravelTime -= 1;
+    // console.log(
+    //   path.yourTargetRoom,
+    //   path.yourTravelTime,
+    //   path.eleTargetRoom,
+    //   path.eleTravelTime
+    // );
     //if we hit zero time we are done, or if there are no more rooms to open
     if (
       path.time <= 0 ||
@@ -208,6 +211,7 @@ const findBestPath2 = (rooms: Rooms): number => {
           eleBestRoom = r;
         }
       });
+      // console.log(yourBestRoom, yourBestVal, eleBestRoom, eleBestVal);
       if (eleBestVal > yourBestVal) {
         path.eleCurrentRoom = path.eleTargetRoom;
         path.total += path.time * rooms[path.eleCurrentRoom].rate;
