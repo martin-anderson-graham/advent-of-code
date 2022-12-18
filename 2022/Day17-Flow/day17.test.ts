@@ -15,7 +15,7 @@ test("part1", () => {
 });
 
 test("sample2", () => {
-  // let i = parseInput(rocks, sample);
-  // let res = runSimulation(i, 1000000000000);
-  // expect(res).toBe(1514285714288);
+  let i = parseInput(rocks, sample);
+  let res = runSimulation(i, 1000000000000);
+  expect(res).toBe(1514285714288);
 });

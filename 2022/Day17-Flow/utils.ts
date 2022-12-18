@@ -37,5 +37,20 @@ const printGrid = (grid: boolean[][]): void => {
       .join("\n")
   );
 };
+const scoreGrid = (grid: boolean[][]): number => {
+  for (let i = 0; i < grid.length; i++) {
+    if (!grid[i].includes(true)) {
+      return i;
+    }
+  }
+  return -1;
+};
 
-export { parseInput, printGrid, Input };
+const resetGrid = (input: Input): void => {
+  let newGrid: boolean[][] = [];
+  for (let i = 0; i < 4; i++) {
+    newGrid.push(new Array(7).fill(false));
+  }
+  input.grid = newGrid;
+};
+export { parseInput, printGrid, Input, scoreGrid, resetGrid };

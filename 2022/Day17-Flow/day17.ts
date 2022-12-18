@@ -1,4 +1,4 @@
-import { Input, printGrid } from "./utils";
+import { Input, printGrid, resetGrid, scoreGrid } from "./utils";
 
 const nextMoveIsValid = (
   rock: boolean[][],
@@ -18,6 +18,29 @@ const nextMoveIsValid = (
     }
   }
   return true;
+};
+const eligibleForGridReset = (
+  rock: boolean[][],
+  grid: boolean[][],
+  jets: string[],
+  startingJetIndex: number
+): boolean => {
+  let topRow = grid.length - 1;
+  while (grid[topRow].every((val) => val === false)) {
+    topRow--;
+  }
+
+  let count = 0;
+  for (let i = 0; i < 7; i++) {
+    if (grid[topRow][i]) {
+      count++;
+    }
+  }
+
+  if (count === 6) {
+    return true;
+  }
+  return grid[topRow].every((val) => val === true);
 };
 
 const jetPush = (
@@ -92,24 +115,67 @@ const runRound = (
   return jetIndex;
 };
 
+type MemoRecord = {
+  count: number;
+  finalJetIndex: number;
+  rounds: number;
+};
+
+const memoIndex = (rockIndex: number, startingJetIndex: number): string => {
+  return `${rockIndex}-${startingJetIndex}`;
+};
+
 const runSimulation = (input: Input, rounds: number): number => {
   let rockIndex = 0;
   let jetIndex = 0;
-  for (let i = 0; i < rounds; i++) {
-    jetIndex = runRound(
-      input.rocks[rockIndex],
-      jetIndex,
-      input.jets,
-      input.grid
-    );
-    rockIndex = (rockIndex + 1) % 5;
-  }
-  for (let i = 0; i < input.grid.length; i++) {
-    if (!input.grid[i].includes(true)) {
-      return i;
+  let memo: Record<string, MemoRecord> = {};
+
+  let total = 0;
+  let r = 0;
+  let numRounds = 0;
+  let startingJetIndex = 0;
+  while (r < rounds) {
+    let mr = memo[memoIndex(rockIndex, jetIndex)];
+    if (mr && mr.rounds + r < rounds) {
+      total += mr.count;
+      jetIndex = mr.finalJetIndex;
+      r += mr.rounds;
+      startingJetIndex = jetIndex;
+    } else {
+      jetIndex = runRound(
+        input.rocks[rockIndex],
+        jetIndex,
+        input.jets,
+        input.grid
+      );
+      numRounds++;
+      rockIndex = (rockIndex + 1) % 5;
+      if (
+        eligibleForGridReset(
+          input.rocks[rockIndex],
+          input.grid,
+          input.jets,
+          jetIndex
+        )
+      ) {
+        let score = scoreGrid(input.grid);
+        total += score;
+        memo[memoIndex(rockIndex, startingJetIndex)] = {
+          count: score,
+          finalJetIndex: jetIndex,
+          rounds: numRounds,
+        };
+        numRounds = 0;
+        startingJetIndex = jetIndex;
+
+        //reset grid
+        resetGrid(input);
+      }
+      r++;
     }
   }
-  return -1;
+  console.log(memo);
+  return total + scoreGrid(input.grid);
 };
 
 export { runSimulation };
