@@ -137,6 +137,7 @@ const runSimulation = (input: Input, rounds: number): number => {
   while (r < rounds) {
     let mr = memo[memoIndex(rockIndex, jetIndex)];
     if (mr && mr.rounds + r < rounds) {
+      console.log("used memo");
       total += mr.count;
       jetIndex = mr.finalJetIndex;
       r += mr.rounds;
