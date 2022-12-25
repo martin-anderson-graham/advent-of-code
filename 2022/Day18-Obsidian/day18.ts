@@ -55,39 +55,145 @@ const part1 = (cubes: Cube[]): number => {
     return total
 }
 
-function cubeFaceCanEscape(cstr: string, processedCubes: Record<string, Cube>): boolean {
-
-    return true
+const getNeighborCubes = (c: Cube): Cube[] => {
+    let neighbors: Cube[] = []
+    neighbors.push({ x: c.x - 1, y: c.y, z: c.z })
+    neighbors.push({ x: c.x + 1, y: c.y, z: c.z })
+    neighbors.push({ x: c.x, y: c.y - 1, z: c.z })
+    neighbors.push({ x: c.x, y: c.y + 1, z: c.z })
+    neighbors.push({ x: c.x, y: c.y, z: c.z - 1 })
+    neighbors.push({ x: c.x, y: c.y, z: c.z + 1 })
+    return neighbors
 }
 
-function countCubeFacesThatCanEscape(c: Cube, processedCubes: Record<string, Cube>): number {
-    let total = 0
-    let neighbors = getNeighborCubeStrings(c)
-    neighbors.forEach(n => {
-        if (cubeFaceCanEscape(n, processedCubes)) {
-            total += 1
-        }
-    })
-    return total
+interface Boundary {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+    minZ: number;
+    maxZ: number;
 }
 
-//new idea - make a hash of cubes whether than can escape
-//make an object hold min/max x,y,z to tell if escape occured
-//make a queue (or recursive?) to check neighbors if they can escape
-//do a last pass through cubes and their neighbors and check against escape hash
+
 const part2 = (cubes: Cube[]): number => {
-    let total = 0
+    let freeAirCubes: Record<string, boolean> = {}
+
+    let bound: Boundary = {
+        minX: Infinity,
+        maxX: -Infinity,
+        minY: Infinity,
+        maxY: -Infinity,
+        minZ: Infinity,
+        maxZ: -Infinity,
+    }
 
     let processedCubes: Record<string, Cube> = {};
 
     cubes.forEach(c => {
         processedCubes[cubeString(c)] = c
+        if (c.x < bound.minX) {
+            bound.minX = c.x
+        }
+        if (c.x > bound.maxX) {
+            bound.maxX = c.x
+        }
+        if (c.y < bound.minY) {
+            bound.minY = c.y
+        }
+        if (c.y > bound.maxY) {
+            bound.maxY = c.y
+        }
+        if (c.z < bound.minZ) {
+            bound.minZ = c.z
+        }
+        if (c.z > bound.maxZ) {
+            bound.maxZ = c.z
+        }
     })
+
+
+    //adjustment for border check to work
+    bound.minX = bound.minX - 1
+    bound.maxX = bound.maxX + 1
+    bound.minY = bound.minY - 1
+    bound.maxY = bound.maxY + 1
+    bound.minZ = bound.minZ - 1
+    bound.maxZ = bound.maxZ + 1
+
+
+
+    let currentlyChecking: Record<string, boolean> = {}
+    const walk = (cube: Cube): boolean => {
+        let cstr = cubeString(cube)
+        if (freeAirCubes[cstr] !== undefined) {
+            return freeAirCubes[cstr]
+        }
+        if (processedCubes[cstr]) {
+            freeAirCubes[cstr] = false
+            return false
+        }
+
+        if (cube.x <= bound.minX ||
+            cube.x >= bound.maxX ||
+            cube.y <= bound.minY ||
+            cube.y >= bound.maxY ||
+            cube.z <= bound.minZ ||
+            cube.z >= bound.maxZ) {
+            freeAirCubes[cstr] = true
+            return true
+        }
+
+        //90% sure the error is here
+        let neighbors = getNeighborCubes(cube)
+        for (let i = 0; i < neighbors.length; i++) {
+            let n = neighbors[i]
+            if (!currentlyChecking[cubeString(n)] && !processedCubes[cubeString(n)]) {
+                currentlyChecking[cubeString(n)] = true
+                if (walk(n)) {
+                    freeAirCubes[cstr] = true
+                    Object.keys(currentlyChecking).forEach(s => {
+                        freeAirCubes[s] = true
+                        delete currentlyChecking[s]
+                    })
+                    return true
+                } else {
+                    currentlyChecking[cubeString(n)] = false
+                }
+            }
+        }
+        Object.keys(currentlyChecking).forEach(s => {
+            freeAirCubes[s] = false
+            delete currentlyChecking[s]
+        })
+        return false
+    }
+
+
+    // for (let x = bound.minX; x <= bound.maxX; x++) {
+    //     for (let y = bound.minY; y <= bound.maxY; y++) {
+    //         for (let z = bound.minZ; z <= bound.maxZ; z++) {
+    //             walk({ x, y, z })
+    //         }
+    //     }
+    // }
+    cubes.forEach(c => {
+        let neighbors = getNeighborCubes(c)
+        neighbors.forEach(n => {
+            walk(n)
+        })
+    })
+
+    let total = 0
 
     cubes.forEach(c => {
-        total += countCubeFacesThatCanEscape(c, processedCubes)
+        let neighbors = getNeighborCubeStrings(c)
+        neighbors.forEach(n => {
+            if (freeAirCubes[n]) {
+                total++
+            }
+        })
     })
-
     return total
 }
 
