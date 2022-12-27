@@ -76,6 +76,12 @@ const updateInventory = (i: Inventory): void => {
     i.geode += i.geodeRobot
 }
 
+const revertInventory = (i: Inventory): void => {
+    i.ore -= i.oreRobot
+    i.clay -= i.clayRobot
+    i.obsidian -= i.obsidianRobot
+    i.geode -= i.geodeRobot
+}
 const canBuild = (robotCost: Cost, inventory: Inventory): boolean => {
     return robotCost.ore <= inventory.ore &&
         robotCost.clay <= inventory.clay &&
@@ -126,41 +132,10 @@ const findMaxGeodes = (bp: Blueprint, timeLimit: number, robotBuildOrder: string
     return { geodes: inventory.geode, timeLeft: nextRobotToBuild === undefined }
 }
 
-//this one takes a string with '.' representing a no-build round
-const findBuiltGeodesCount = (buildOrder: string, bp: Blueprint): number => {
-    let inventory: Inventory = {
-        ore: 0,
-        clay: 0,
-        obsidian: 0,
-        geode: 0,
-        oreRobot: 1,
-        clayRobot: 0,
-        obsidianRobot: 0,
-        geodeRobot: 0
-    }
-
-    for (let i = 0; i < buildOrder.length; i++) {
-        let currentOrder = buildOrder.charAt(i)
-        if (currentOrder === '.') {
-            updateInventory(inventory)
-        } else {
-            let robotCost = bp[orderKey[currentOrder]]
-            inventory.ore -= robotCost.ore
-            inventory.clay -= robotCost.clay
-            inventory.obsidian -= robotCost.obsidian
-            updateInventory(inventory)
-            inventory[orderKey[currentOrder]] += 1
-        }
-    }
-
-    return inventory.geode
-}
-
 interface BluePrintLimit {
     maxOreRobots: number;
     maxClayRobots: number;
     maxObsidianRobots: number;
-    maxGeodeRobots: number;
 }
 
 const getBluePrintLimit = (bp: Blueprint): BluePrintLimit => {
@@ -172,7 +147,6 @@ const getBluePrintLimit = (bp: Blueprint): BluePrintLimit => {
         maxOreRobots,
         maxClayRobots,
         maxObsidianRobots,
-        maxGeodeRobots: 20,
     }
 }
 
@@ -183,73 +157,89 @@ type BuildOrderHash = {
     geodeRobots: number;
 }
 
-// const isOrderComplete = (bpLimit: BluePrintLimit, bpHash: BuildOrderHash): boolean => {
-//     return bpLimit.maxOreRobots === bpHash.oreRobots &&
-//         bpLimit.maxClayRobots === bpHash.clayRobots &&
-//         bpLimit.maxObsidianRobots === bpHash.obsidianRobots &&
-//         bpLimit.maxGeodeRobots === bpHash.geodeRobots
-// }
+const buildRobot = (robotCost: Cost, inventory: Inventory) => {
+    inventory.ore -= robotCost.ore
+    inventory.clay -= robotCost.clay
+    inventory.obsidian -= robotCost.obsidian
+}
 
-const part1 = (timeLimit: number, blueprints: Blueprint[]): number => {
+const unBuildRobot = (robotCost: Cost, inventory: Inventory) => {
+    inventory.ore += robotCost.ore
+    inventory.clay += robotCost.clay
+    inventory.obsidian += robotCost.obsidian
+}
+
+const part1 = (timeLimit: number, blueprints: Blueprint[], part1: boolean = true): number => {
     let total = 0
+    if (part1 === false) {
+        total++
+    }
 
-    //figure out how to optimize viable build orders
-    //iterate through numbers of ore/clay
-    // const recursiveBuildOrderMaker = (bp: Blueprint, buildOrder: string, bpLimit: BluePrintLimit, bpHash: BuildOrderHash) => {
-    //     let res = findMaxGeodes(bp, timeLimit, buildOrder)
-    //     let max = res.geodes
-    //     if (max > bp.maxGeodes) {
-    //         bp.maxGeodes = max
-    //         console.log(bpHash, bp.maxGeodes)
-    //     }
-    //     if (!res.timeLeft) {
-    //         return
-    //     }
-    //     if (bpHash.oreRobots < bpLimit.maxOreRobots) {
-    //         buildOrder += 'o'
-    //         bpHash.oreRobots += 1
-    //         recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-    //         buildOrder = buildOrder.slice(0, -1)
-    //         bpHash.oreRobots -= 1
-    //     }
-    //     if (bpHash.clayRobots < bpLimit.maxClayRobots) {
-    //         buildOrder += 'c'
-    //         bpHash.clayRobots += 1
-    //         recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-    //         buildOrder = buildOrder.slice(0, -1)
-    //         bpHash.clayRobots -= 1
-    //     }
-    //     if (bpHash.clayRobots > 1 && bpHash.obsidianRobots < bpLimit.maxObsidianRobots) {
-    //         buildOrder += 'O'
-    //         bpHash.obsidianRobots += 1
-    //         recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-    //         buildOrder = buildOrder.slice(0, -1)
-    //         bpHash.obsidianRobots -= 1
-    //     }
-    //     if (bpHash.obsidianRobots > 1 && bpHash.geodeRobots < bpLimit.maxGeodeRobots) {
-    //         buildOrder += 'g'
-    //         bpHash.geodeRobots += 1
-    //         recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-    //         buildOrder = buildOrder.slice(0, -1)
-    //         bpHash.geodeRobots -= 1
-    //     }
-    // }
+    const recursiveBuildOrderMaker = (bp: Blueprint, depth: number, bpLimit: BluePrintLimit, bpHash: BuildOrderHash, inventory: Inventory) => {
+        if (depth === timeLimit) {
+            if (inventory.geode > bp.maxGeodes) {
+                bp.maxGeodes = inventory.geode
+            }
+            return
+        }
 
-    // TODO: update inventory - kinda feels like I'm just doing all the inventory stuff here, so why do twice?
-    const recursiveBuildOrderMaker = (bp: Blueprint, buildOrder: string, bpLimit: BluePrintLimit, bpHash: BuildOrderHash) => {
-        if(buildOrder.length === timeLimit) {
-            let max = findBuiltGeodesCount(buildOrder, bp)
-            if (max > bp.maxGeodes) {
-                bp.maxGeodes = max
-                console.log(bpHash, bp.maxGeodes)
+        //try geode robot - only do nothing if you can't do this
+        if (canBuild(bp.geodeRobot, inventory)) {
+            buildRobot(bp.geodeRobot, inventory)
+            updateInventory(inventory)
+            inventory.geodeRobot += 1
+            bpHash.geodeRobots += 1
+            recursiveBuildOrderMaker(bp, depth + 1, bpLimit, bpHash, inventory)
+            unBuildRobot(bp.geodeRobot, inventory)
+            bpHash.geodeRobots -= 1
+            inventory.geodeRobot -= 1
+            revertInventory(inventory)
+        } else {
+            //try obsidian
+            if (bpHash.obsidianRobots < bpLimit.maxObsidianRobots && canBuild(bp.obsidianRobot, inventory)) {
+                buildRobot(bp.obsidianRobot, inventory)
+                updateInventory(inventory)
+                inventory.obsidianRobot += 1
+                bpHash.obsidianRobots += 1
+                recursiveBuildOrderMaker(bp, depth + 1, bpLimit, bpHash, inventory)
+                unBuildRobot(bp.obsidianRobot, inventory)
+                bpHash.obsidianRobots -= 1
+                inventory.obsidianRobot -= 1
+                revertInventory(inventory)
+            } else {
+                //try clay robot
+                if (bpHash.clayRobots < bpLimit.maxClayRobots && canBuild(bp.clayRobot, inventory)) {
+                    buildRobot(bp.clayRobot, inventory)
+                    updateInventory(inventory)
+                    inventory.clayRobot += 1
+                    bpHash.clayRobots += 1
+                    recursiveBuildOrderMaker(bp, depth + 1, bpLimit, bpHash, inventory)
+                    unBuildRobot(bp.clayRobot, inventory)
+                    bpHash.clayRobots -= 1
+                    inventory.clayRobot -= 1
+                    revertInventory(inventory)
+                }
+
+                //try ore robot
+                if (bpHash.oreRobots < bpLimit.maxOreRobots && canBuild(bp.oreRobot, inventory)) {
+                    buildRobot(bp.oreRobot, inventory)
+                    updateInventory(inventory)
+                    inventory.oreRobot += 1
+                    bpHash.oreRobots += 1
+                    recursiveBuildOrderMaker(bp, depth + 1, bpLimit, bpHash, inventory)
+                    unBuildRobot(bp.oreRobot, inventory)
+                    bpHash.oreRobots -= 1
+                    inventory.oreRobot -= 1
+                    revertInventory(inventory)
+                }
+                //try building nothing
+                updateInventory(inventory)
+                recursiveBuildOrderMaker(bp, depth + 1, bpLimit, bpHash, inventory)
+                revertInventory(inventory)
             }
         }
-        //try building nothing
-            buildOrder += '.'
-            recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-            buildOrder = buildOrder.slice(0, -1)
-        //only add robots you can afford to the build string    
     }
+
 
     blueprints.forEach((bp, idx) => {
         let limit = getBluePrintLimit(bp)
@@ -259,72 +249,30 @@ const part1 = (timeLimit: number, blueprints: Blueprint[]): number => {
             obsidianRobots: 0,
             geodeRobots: 0,
         }
-        recursiveBuildOrderMaker(bp, '', limit, hash)
-        let val = bp.maxGeodes * (idx + 1)
-        total += val
+        let inventory: Inventory = {
+            ore: 0,
+            clay: 0,
+            obsidian: 0,
+            geode: 0,
+            oreRobot: 1,
+            clayRobot: 0,
+            obsidianRobot: 0,
+            geodeRobot: 0
+        }
+        recursiveBuildOrderMaker(bp, 0, limit, hash, inventory)
+        if (part1) {
+            let val = bp.maxGeodes * (idx + 1)
+            console.log(idx + 1, '/', blueprints.length, ":", val)
+            total += val
+        } else {
+            console.log(idx + 1, '/', blueprints.length, ":", bp.maxGeodes)
+            total *= bp.maxGeodes
+        }
     })
     return total
 }
 
-const part2 = (timeLimit: number, blueprints: Blueprint[]): number => {
-    let total = 0
-
-    const recursiveBuildOrderMaker = (bp: Blueprint, buildOrder: string, bpLimit: BluePrintLimit, bpHash: BuildOrderHash) => {
-        let res = findMaxGeodes(bp, timeLimit, buildOrder)
-        let max = res.geodes
-        if (max > bp.maxGeodes) {
-            bp.maxGeodes = max
-        }
-        if (!res.timeLeft) {
-            return
-        }
-        if (bpHash.oreRobots < bpLimit.maxOreRobots) {
-            buildOrder += 'o'
-            bpHash.oreRobots += 1
-            recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-            buildOrder = buildOrder.slice(0, -1)
-            bpHash.oreRobots -= 1
-        }
-        if (bpHash.clayRobots < bpLimit.maxClayRobots) {
-            buildOrder += 'c'
-            bpHash.clayRobots += 1
-            recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-            buildOrder = buildOrder.slice(0, -1)
-            bpHash.clayRobots -= 1
-        }
-        if (bpHash.clayRobots > 1 && bpHash.obsidianRobots < bpLimit.maxObsidianRobots) {
-            buildOrder += 'O'
-            bpHash.obsidianRobots += 1
-            recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-            buildOrder = buildOrder.slice(0, -1)
-            bpHash.obsidianRobots -= 1
-        }
-        if (bpHash.obsidianRobots > 1 && bpHash.geodeRobots < bpLimit.maxGeodeRobots) {
-            buildOrder += 'g'
-            bpHash.geodeRobots += 1
-            recursiveBuildOrderMaker(bp, buildOrder, bpLimit, bpHash)
-            buildOrder = buildOrder.slice(0, -1)
-            bpHash.geodeRobots -= 1
-        }
-    }
-
-
-    blueprints.forEach(bp => {
-        let limit = getBluePrintLimit(bp)
-        let hash: BuildOrderHash = {
-            oreRobots: 0,
-            clayRobots: 0,
-            obsidianRobots: 0,
-            geodeRobots: 0,
-        }
-        recursiveBuildOrderMaker(bp, '', limit, hash)
-        console.log(bp.maxGeodes)
-        total += bp.maxGeodes
-    })
-    return total
-}
 export {
     parseInput,
     part1,
-    part2
 }

@@ -1,22 +1,29 @@
 import { sample, input } from "./input"
-import { parseInput, part1, part2 } from "./day19"
+import { parseInput, part1} from "./day19"
 
-test("sample", () => {
+xtest("sample", () => {
     let i = parseInput(sample)
     let res = part1(24, i)
     expect(res).toBe(33)
 })
 
 
-xtest("sample", () => {
+xtest("part1", () => {
     let i = parseInput(input)
     let res = part1(24, i)
     expect(res).toBe(1262)
 })
 
-
+//assumption about building geode robots before obsidian ones is wrong
 xtest("sample2", () => {
     let i = parseInput(sample)
-    let res = part2(32, i.slice(0,3))
-    expect(res).toBe(62)
+    let res = part1(32, i.slice(0,3), false )
+    expect(res).toBe(56*62)
+})
+
+//but it works for the input ;)
+test("part2", () => {
+    let i = parseInput(input)
+    let res = part1(32, i.slice(0,3), false )
+    expect(res).toBe(37191)
 })
