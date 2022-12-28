@@ -22,5 +22,5 @@ test("sample2", () => {
 test("part2", () => {
     let i = parseInput(input)
     let res = findYourValue(i)
-    expect(res).toBe(301)
+    expect(res).toBe(3221245824363)
 })

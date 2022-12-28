@@ -196,9 +196,9 @@ const processMonkeysUpToHumn = (knownMonkeys: Record<string, Monkey>, monkeyOrde
 }
 
 const searching = (knownMonkeys: Record<string, Monkey>, monkeyOrder: Monkey[], startingIndex: number): boolean => {
-    for (let i = startingIndex+1; i < monkeyOrder.length; i++) {
+    for (let i = startingIndex + 1; i < monkeyOrder.length; i++) {
         let monkey = monkeyOrder[i]
-        
+
         if (monkey.op === undefined || monkey.first === undefined || monkey.second === undefined) {
             continue
         }
@@ -208,7 +208,7 @@ const searching = (knownMonkeys: Record<string, Monkey>, monkeyOrder: Monkey[], 
         if (firstValue === undefined || secondValue === undefined) {
             throw new Error("This should not happen")
         }
-        if(monkey.name === 'root') {
+        if (monkey.name === 'root') {
             return firstValue !== secondValue
         }
 
@@ -220,7 +220,7 @@ const searching = (knownMonkeys: Record<string, Monkey>, monkeyOrder: Monkey[], 
             knownMonkeys[monkey.name] = monkey
         } else if (monkey.op === '/') {
             monkey.value = firstValue / secondValue
-            if(!Number.isInteger(firstValue/secondValue)) {
+            if (!Number.isInteger(monkey.value)) {
                 return true
             }
             knownMonkeys[monkey.name] = monkey
@@ -231,6 +231,107 @@ const searching = (knownMonkeys: Record<string, Monkey>, monkeyOrder: Monkey[], 
     }
     return false
 }
+
+const processAllPreHumanMonkeys = (knownMonkeys: Record<string, Monkey>, monkeyOrder: Monkey[], startingIndex: number): void => {
+    let cont = true
+    while (cont) {
+        cont = false
+        for (let i = startingIndex + 1; i < monkeyOrder.length; i++) {
+            let m = monkeyOrder[i]
+            if (m.value === undefined) {
+                let first = knownMonkeys[m.first]?.value
+                let second = knownMonkeys[m.second]?.value
+                if (first !== undefined && second !== undefined) {
+                    cont = true
+                    if (m.op === '+') {
+                        m.value = first + second
+                        knownMonkeys[m.name] = m
+                    } else if (m.op === '-') {
+                        m.value = first - second
+                        knownMonkeys[m.name] = m
+                    } else if (m.op === '/') {
+                        m.value = first / second
+                        knownMonkeys[m.name] = m
+                    } else if (m.op === '*') {
+                        m.value = first * second
+                        knownMonkeys[m.name] = m
+                    }
+                }
+            }
+        }
+    }
+}
+
+const backwardsProcessMonkeys = (knownMonkeys: Record<string, Monkey>, monkeyOrder: Monkey[]): void => {
+    let cont = true
+    while (cont) {
+        cont = false
+        for (let i = 0; i < monkeyOrder.length; i++) {
+            let m = monkeyOrder[i]
+            if (m.value === undefined) {
+                continue
+            }
+            //to catch hardcoded values
+            if (m.op === undefined) {
+                continue
+            }
+            let first = knownMonkeys[m.first]?.value
+            let second = knownMonkeys[m.second]?.value
+            //already finished ones
+            if (first !== undefined && second !== undefined) {
+                continue
+            }
+            cont = true
+            if (first === undefined) {
+                let newFirst = 0
+                if (m.op === '+') {
+                    newFirst = m.value - second
+                } else if (m.op === '-') {
+                    newFirst = m.value + second
+                } else if (m.op === '/') {
+                    newFirst = m.value * second
+                } else if (m.op === '*') {
+                    newFirst = m.value / second
+                }
+
+                knownMonkeys[m.first] = monkeyOrder.find(mn => mn.name === m.first)
+                knownMonkeys[m.first].value = newFirst
+            } else {
+                let newSecond = 0
+                if (m.op === '+') {
+                    newSecond = m.value - first
+                } else if (m.op === '-') {
+                    newSecond = first - m.value
+                } else if (m.op === '/') {
+                    newSecond = first / m.value
+                } else if (m.op === '*') {
+                    newSecond = m.value / first
+                }
+
+                knownMonkeys[m.second] = monkeyOrder.find(mn => mn.name === m.second)
+                knownMonkeys[m.second].value = newSecond
+
+
+            }
+        }
+    }
+}
+//to sort all undefined values to the end in order
+const sortMonkeyOrder = (monkeys: Monkey[]) => {
+    monkeys.sort((a, b): number => {
+        if (a.value !== undefined && b.value === undefined) {
+            return -1
+        } else if (a.value === undefined && b.value !== undefined) {
+            return 1
+        } else if (a.value === undefined && b.value === undefined) {
+            return 0
+        } else if (a.value !== undefined && b.value !== undefined) {
+            return 0
+        }
+        return 0
+    })
+}
+
 const findRootValue = (monkeys: Monkey[]): number => {
     let [knownMonkeys, monkeyOrder] = createMonkeyQueue(monkeys)
     processMonkeyOrder(knownMonkeys, monkeyOrder)
@@ -240,10 +341,44 @@ const findRootValue = (monkeys: Monkey[]): number => {
 const findYourValue = (monkeys: Monkey[]): number => {
     let [knownMonkeys, monkeyOrder] = createMonkeyQueue(monkeys)
     let humnIndex = processMonkeysUpToHumn(knownMonkeys, monkeyOrder)
-    knownMonkeys.humn.value = 0
-    while (searching(knownMonkeys, monkeyOrder, humnIndex)) {
-        knownMonkeys.humn.value += 1
+    knownMonkeys.humn.value = undefined
+    processAllPreHumanMonkeys(knownMonkeys, monkeyOrder, humnIndex)
+    sortMonkeyOrder(monkeyOrder)
+    while (monkeyOrder[humnIndex + 1]?.value !== undefined) {
+        monkeyOrder = monkeyOrder.slice(0, humnIndex).concat(monkeyOrder[humnIndex + 1], monkeyOrder[humnIndex], ...monkeyOrder.slice(humnIndex + 2))
+        humnIndex += 1
     }
+    // knownMonkeys.humn.value = 0
+    // while (searching(knownMonkeys, monkeyOrder, humnIndex)) {
+    //     knownMonkeys.humn.value += 1
+    // }
+
+    let rootMonkey = monkeyOrder.find(m => m.name === 'root') as Monkey
+
+    knownMonkeys[rootMonkey.first] = monkeyOrder.find(m => m.name === rootMonkey.first)
+    knownMonkeys[rootMonkey.first].value = monkeyOrder.find(m => m.name === rootMonkey.second).value
+
+    backwardsProcessMonkeys(knownMonkeys, monkeyOrder)
+
+    let str: string[] = []
+    for (let i = 0; i < monkeyOrder.length; i++) {
+        let m = monkeyOrder[i]
+        if (m.name === 'humn') {
+            str.push(`${m.name}: ${m.value}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<`)
+        } else {
+            str.push(`${m.name}: ${m.value}`)
+        }
+    }
+    // console.log(str.join('\n'))
+    let str2: string[] = []
+    for (let i = humnIndex + 1; i < monkeyOrder.length; i++) {
+        let m = monkeyOrder[i]
+        let first = knownMonkeys[m.first]?.value || m.first
+        let second = knownMonkeys[m.second]?.value || m.second
+        str2.push(`${m.name}: ${first} ${m.op} ${second}`)
+
+    }
+    // console.log(str2.join('\n'))
     return knownMonkeys.humn.value || -1
 }
 
