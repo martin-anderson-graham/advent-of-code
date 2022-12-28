@@ -44,6 +44,15 @@ class DLL {
         console.log(str.join(' => '))
     }
 
+    reversePrint() {
+        let str: number[] = []
+        let currentNode: RNode | null = this.tail
+        while (currentNode !== null) {
+            str.push(currentNode.value)
+            currentNode = currentNode.previous
+        }
+        console.log(str.join(' => '))
+    }
     getRNodeArray(): RNode[] {
         let r: RNode[] = []
         let currentNode: RNode | null = this.head
@@ -56,76 +65,74 @@ class DLL {
 
     moveNode(node: RNode) {
         let negative = node.value < 0
-        let moveAmount = Math.abs(node.value)
-        if (moveAmount >= this.length - 1) {
-            moveAmount = moveAmount % (this.length - 1)
-        }
+        let moveAmount = Math.abs(node.value) % (this.length - 1)
+        // let moveAmount = Math.abs(node.value)
         for (let i = 0; i < moveAmount; i++) {
             if (negative) {
-                if (node === this.head && node.next !== null) {
+                if (node === this.head) {
+                    if (node.next === null) {
+                        throw new Error("Something has gone wrong")
+                    }
                     this.head = node.next
                     this.head.previous = null
                     this.tail.next = node
                     node.previous = this.tail
+                    node.next = null
                     this.tail = node
-                    this.tail.next = null
                 }
-
-                if (node === this.tail && node.previous !== null) {
-                    let previous = node.previous
-                    if (previous.previous === null) {
-                        throw new Error("We have a problem Scottie")
-                    }
-                    previous.previous.next = node
-                    node.previous = previous.previous
-                    node.next = previous
-                    previous.next = null
-                    previous.previous = node
-                    this.tail = previous
-                } else if (node !== null && node.previous !== null && node.next !== null) {
-                    let next = node.next
-                    let previous = node.previous
-                    node.previous = previous.previous
-                    node.next = previous
-                    previous.next = next
-                    next.previous = previous
-                    if (previous.previous === null) {
-                        this.head = node
-                    } else {
-                        previous.previous.next = node
-                    }
-                    previous.previous = node
+                let prev = node.previous
+                let next = node.next
+                if (prev === null) {
+                    throw new Error("Something went wrong")
+                }
+                let prevprev = prev.previous
+                prev.previous = node
+                node.next = prev
+                node.previous = prevprev
+                prev.next = next
+                if (next === null) {
+                    this.tail = prev
+                } else {
+                    next.previous = prev
+                }
+                if (prevprev === null) {
+                    this.head = node
+                } else {
+                    prevprev.next = node
                 }
             } else {
-                if (node === this.tail && node.previous !== null) {
+                if (node === this.tail) {
+                    if (node.previous === null) {
+                        throw new Error("Something has gone wrong")
+                    }
                     this.tail = node.previous
                     this.tail.next = null
                     node.next = this.head
+                    this.head.previous = node
                     this.head = node
                     node.previous = null
                 }
 
-                if (node === this.head && node.next !== null) {
-                    let next = node.next
-                    node.next = next.next
-                    node.previous = next
-                    this.head = next
-                    next.next = node
-                    next.previous = null
-                } else if (node.next !== null && node.previous !== null) {
-                    let prev = node.previous
-                    let next = node.next
-                    node.next = next.next
-                    node.previous = next
-                    next.next = node
-                    next.previous = prev
-                    prev.next = next
+                let prev = node.previous
+                let next = node.next
+                if (next === null) {
+                    throw new Error("Something went wrong")
+                }
+                let nextnext = next.next
 
-                    if (node.next === null) {
-                        this.tail = node
-                    } else {
-                        node.next.previous = node
-                    }
+                node.next = nextnext
+                node.previous = next
+                next.next = node
+                next.previous = prev
+                if (prev === null) {
+                    this.head = next
+                } else {
+                    prev.next = next
+                }
+                if (nextnext === null) {
+                    this.tail = node
+                } else {
+                    nextnext.previous = node
                 }
             }
         }
@@ -133,52 +140,39 @@ class DLL {
 
     score(): number {
         let score = 0
-        let first = 1000 % this.length;
         let currentNode = this.zeroNode
         if (currentNode === null) {
-            throw new Error("Apparently there is no zero node")
+            throw new Error("Apparently there is no zero node?")
         }
-        for (let i = 0; i < first; i++) {
+        for (let i = 1; i <= 3000; i++) {
             currentNode = currentNode.next
             if (currentNode === null) {
                 currentNode = this.head
             }
-        }
-        score += currentNode.value
-
-        let second = 2000 % this.length;
-        currentNode = this.zeroNode
-        if (currentNode === null) {
-            throw new Error("Apparently there is no zero node")
-        }
-        for (let i = 0; i < second; i++) {
-            currentNode = currentNode.next
-            if (currentNode === null) {
-                currentNode = this.head
+            if (i === 1000 || i === 2000 || i === 3000) {
+                score += currentNode.value
             }
         }
-        score += currentNode.value
-
-        let third = 3000 % this.length;
-        currentNode = this.zeroNode
-        if (currentNode === null) {
-            throw new Error("Apparently there is no zero node")
-        }
-        for (let i = 0; i < third; i++) {
-            currentNode = currentNode.next
-            if (currentNode === null) {
-                currentNode = this.head
-            }
-        }
-        score += currentNode.value
         return score
     }
 
-    performMixing(): void {
+    performMixing(times: number = 1): void {
         let originalNodeOrder = this.getRNodeArray()
-        originalNodeOrder.forEach(node => {
-            this.moveNode(node)
-        })
+        for (let i = 0; i < times; i++) {
+            originalNodeOrder.forEach(node => {
+                this.moveNode(node)
+            })
+        }
+    }
+
+    applyDecriptionKey(key: number) {
+        let currentNode: RNode | null = this.head
+        while (currentNode !== null) {
+            currentNode.value *= key
+            currentNode = currentNode.next
+        }
+
+        this.performMixing(10)
     }
 }
 
