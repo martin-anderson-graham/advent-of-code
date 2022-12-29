@@ -85,6 +85,7 @@ class Player {
             this.row = nextPosition[0]
             this.col = nextPosition[1]
             nextPosition = this.determineNextPosition(nextPosition, grid, changeArr)
+            grid[this.row][this.col] = this.direction
         }
     }
 
@@ -96,9 +97,19 @@ class Board {
 
     constructor(inputStr: string) {
         this.grid = []
+        let maxLength = 0
         inputStr.split('\n').forEach(line => {
+            if(line.length > maxLength) {
+                maxLength = line.length
+            }
             this.grid.push(line.split(''))
         })
+        this.grid.forEach((row) => {
+            while(row.length < maxLength) {
+                row.push(' ')
+            }
+        })
+
         let col = 0
         for (let i = 0; i < this.grid[0].length; i++) {
             if (this.grid[0][i] === '.') {
@@ -119,8 +130,10 @@ class Board {
         ints.forEach(int => {
             if (int === 'L') {
                 this.player.turnLeft()
+            this.grid[this.player.row][this.player.col] = this.player.direction
             } else if (int === 'R') {
                 this.player.turnRight()
+            this.grid[this.player.row][this.player.col] = this.player.direction
             } else if (typeof int === 'number') {
                 this.player.move(int, this.grid)
             }
@@ -128,13 +141,13 @@ class Board {
     }
     score() {
         let dir = 0
-        if (this.player.direction = '>') {
+        if (this.player.direction === '>') {
             dir = 0
-        } else if (this.player.direction = 'v') {
+        } else if (this.player.direction === 'v') {
             dir = 1
-        } else if (this.player.direction = '<') {
+        } else if (this.player.direction === '<') {
             dir = 2
-        } else if (this.player.direction = '^') {
+        } else if (this.player.direction === '^') {
             dir = 3
         }
         return 1000 * (this.player.row + 1) + 4 * (this.player.col + 1) + dir
