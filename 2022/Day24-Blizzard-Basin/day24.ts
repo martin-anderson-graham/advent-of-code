@@ -137,19 +137,23 @@ class Queue {
         }
         //left
         loc = getLocString(node.r, node.c - 1)
-        if (node.r !== 0 && node.c - 1 > 0 && tornadoLocationsHash[loc] === undefined && !this.visited[loc + ',' + (node.round + 1)]) {
+        if (node.r !== 0 && node.r !== grid.numRows - 1 && node.c - 1 > 0 && tornadoLocationsHash[loc] === undefined && !this.visited[loc + ',' + (node.round + 1)]) {
             this.enqueue(node.r, node.c - 1, node.round + 1)
             this.visited[loc + ',' + (node.round + 1)] = true
         }
         //right
         loc = getLocString(node.r, node.c + 1)
-        if (node.r !== 0 && node.c + 1 < grid.numCols - 1 && tornadoLocationsHash[loc] === undefined && !this.visited[loc + ',' + (node.round + 1)]) {
+        if (node.r !== 0 && node.r !== grid.numRows - 1 && node.c + 1 < grid.numCols - 1 && tornadoLocationsHash[loc] === undefined && !this.visited[loc + ',' + (node.round + 1)]) {
             this.enqueue(node.r, node.c + 1, node.round + 1)
             this.visited[loc + ',' + (node.round + 1)] = true
         }
-        //special check for the ending spot
+        //special check for the ending spot going
         if (node.c === grid.end.c && node.r === grid.end.r - 1) {
             this.enqueue(node.r + 1, node.c, node.round + 1)
+        }
+        //special check for the ending spot coming
+        if (node.c === grid.end.c && node.r === grid.end.r + 1) {
+            this.enqueue(node.r - 1, node.c, node.round + 1)
         }
     }
 
@@ -223,11 +227,11 @@ const findSolution = (tornados: Tornado[], grid: Grid, part2 = false): number =>
     }, {})
 
     while (true) {
-        // q.printQueue()
         let node = q.dequeue()
-        // console.log(node)
         if (node.r === grid.end.r && node.c === grid.end.c) {
             if (part2) {
+                q = new Queue(node.r, node.c, node.round);
+                [grid.start.r, grid.start.c, grid.end.r, grid.end.c] = [grid.end.r, grid.end.c, grid.start.r, grid.start.c];
                 break
             } else {
                 return node.round
@@ -235,7 +239,30 @@ const findSolution = (tornados: Tornado[], grid: Grid, part2 = false): number =>
         }
         if (node.round + 1 !== grid.tornadoRound) {
             tornadoLocationsHash = updateTornados(grid, tornados)
-            // printGrid(grid, tornados)
+            grid.tornadoRound += 1
+        }
+        q.addAvailableNodes(node, grid, tornadoLocationsHash)
+    }
+    while (true) {
+        let node = q.dequeue()
+        if (node.r === grid.end.r && node.c === grid.end.c) {
+            q = new Queue(node.r, node.c, node.round);
+            [grid.start.r, grid.start.c, grid.end.r, grid.end.c] = [grid.end.r, grid.end.c, grid.start.r, grid.start.c];
+            break
+        }
+        if (node.round + 1 !== grid.tornadoRound) {
+            tornadoLocationsHash = updateTornados(grid, tornados)
+            grid.tornadoRound += 1
+        }
+        q.addAvailableNodes(node, grid, tornadoLocationsHash)
+    }
+    while (true) {
+        let node = q.dequeue()
+        if (node.r === grid.end.r && node.c === grid.end.c) {
+            return node.round
+        }
+        if (node.round + 1 !== grid.tornadoRound) {
+            tornadoLocationsHash = updateTornados(grid, tornados)
             grid.tornadoRound += 1
         }
         q.addAvailableNodes(node, grid, tornadoLocationsHash)

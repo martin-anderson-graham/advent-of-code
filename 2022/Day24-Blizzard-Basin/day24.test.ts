@@ -16,5 +16,12 @@ test("part1", () => {
 test("sample2", () => {
     let [tornados, grid] = parseInput(sample)
     let res = findSolution(tornados, grid, true)
-    expect(res).toBe(18)
+    expect(res).toBe(54)
+})
+
+test("part2", () => {
+    let [tornados, grid] = parseInput(input)
+    let res = findSolution(tornados, grid, true)
+    //778 is too low
+    expect(res).toBe(856)
 })
