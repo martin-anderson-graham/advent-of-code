@@ -7,7 +7,7 @@ test("S to D", () => {
     expect(SNAFUtoDecimal('1121-1110-1=0')).toBe(314159265)
 })
 
-xtest("d to s", () => {
+test("d to s", () => {
     expect(decimalToSnafu(8)).toBe('2=')
     expect(decimalToSnafu(9)).toBe('2-')
     expect(decimalToSnafu(10)).toBe('20')
@@ -16,11 +16,11 @@ xtest("d to s", () => {
     expect(decimalToSnafu(1747)).toBe('1=-0-2')
 })
 
-xtest("processSnafu", () => {
-    // let res = getSnafuSum(['10', '11'])
-    // expect(res).toBe('21')
+test("processSnafu", () => {
+    let res = getSnafuSum(['10', '11'])
+    expect(res).toBe('21')
     let res2 = getSnafuSum(['12', '11'])
-    expect(res2).toBe('1=-')
+    expect(res2).toBe('1==')
 })
 
 test("sample", () => {

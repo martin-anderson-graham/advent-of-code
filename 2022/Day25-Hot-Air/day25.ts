@@ -40,7 +40,6 @@ const SNAFUtoDecimal = (snafu: string): number => {
 
 
 const increment = (res: Result, idx: number) => {
-    console.log(res, res.svals[idx])
     if (idx === res.length) {
         res.svals[idx] = '1'
         res.length += 1
