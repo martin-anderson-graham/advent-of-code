@@ -1,110 +1,114 @@
-use std::fs;
+use std::str::FromStr;
 
-#[derive(Debug)]
-enum First {
-    A,
-    B,
-    C,
-}
-
-#[derive(Debug)]
-enum Second {
-    X,
-    Y,
-    Z,
-}
-
-enum RoundResult {
-    Win,
-    Draw,
+#[derive(Debug, Clone, Copy)]
+enum Outcome {
     Loss,
+    Draw,
+    Win,
 }
 
-#[derive(Debug)]
-struct Round {
-    first: First,
-    second: Second,
-}
-
-impl Round {
-    fn score_round(&self) -> u32 {
-        let sum =  match self.second {
-            Second::X => 1,
-            Second::Y => 2,
-            Second::Z => 3,
-        };
-        let round_result: RoundResult = match (&self.first, &self.second) {
-            (First::A, Second::X) => RoundResult::Draw,
-            (First::A, Second::Y) => RoundResult::Win,
-            (First::A, Second::Z) => RoundResult::Loss,
-            (First::B, Second::X) => RoundResult::Loss,
-            (First::B, Second::Y) => RoundResult::Draw,
-            (First::B, Second::Z) => RoundResult::Win,
-            (First::C, Second::X) => RoundResult::Win,
-            (First::C, Second::Y) => RoundResult::Loss,
-            (First::C, Second::Z) => RoundResult::Draw,
-        };
-        let result_score = match round_result {
-            RoundResult::Win => 6,
-            RoundResult::Draw => 3,
-            RoundResult::Loss => 0,
-        };
-
-        sum + result_score
+impl Outcome {
+    fn get_points(&self) -> usize {
+        match self {
+            Outcome::Loss => 0,
+            Outcome::Draw => 3,
+            Outcome::Win => 6,
+        }
     }
 }
 
-fn main() {
-    let raw1 = load_raw("ex1.txt");
-    let rounds = parse(&raw1);
-    let sum: u32 = rounds.iter().map(|r| r.score_round()).sum();
-    assert_eq!(sum, 15);
-    let raw2 = load_raw("input.txt");
-    let rounds = parse(&raw2);
-    let sum2: u32 = rounds.iter().map(|r| r.score_round()).sum();
-    println!("{sum2}")
+#[derive(Debug, Clone, Copy)]
+struct Round {
+    ours: Move,
+    result: Outcome,
 }
 
-pub fn load_raw(file: &str) -> String {
-    fs::read_to_string(file).unwrap_or_else(|_| panic!("Error reading file {}", file))
+impl Round {
+    fn score_round(&self) -> usize {
+        self.ours.get_points() + self.result.get_points()
+    }
 }
 
-fn parse(raw: &str) -> Vec<Round> {
-    let binding = raw.replace('\r', "");
-    let arr: Vec<&str> = binding.split("\n").collect();
-    let mut result: Vec<Round> = vec![];
-    for line in arr {
-        if line == "" {
-            continue;
-        }
-        let mut iters = line.chars();
-        let mut round = Round {
-            first: First::A,
-            second: Second::X,
+impl FromStr for Round {
+    type Err = color_eyre::Report;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut chars = s.chars();
+        let (Some(theirs), Some(' '), Some(ours), None) = (chars.next(), chars.next(), chars.next(), chars.next()) else {
+            return Err(color_eyre::eyre::eyre!("expected <theirs>space<ours>EOF, got {s:?}"));
         };
-        if let Some(first) = iters.next() {
-            if first == 'A' {
-                round.first = First::A;
-            } else if first == 'B' {
-                round.first = First::B;
-            } else if first == 'C' {
-                round.first = First::C;
-            }
+        let theirs: Move = Move::try_from(theirs)?;
+        let outcome: Outcome = match ours {
+            'X' => Ok(Outcome::Loss),
+            'Y' => Ok(Outcome::Draw),
+            'Z' => Ok(Outcome::Win),
+            _ => Err(color_eyre::eyre::eyre!("Can't read game result, got {s:?}")),
+        }?;
+
+        let ours = Move::find_missing_move(&theirs, &outcome);
+
+        Ok(Self {
+            result: outcome,
+            ours,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+enum Move {
+    Rock,
+    Paper,
+    Scissors,
+}
+
+impl TryFrom<char> for Move {
+    type Error = color_eyre::Report;
+    fn try_from(c: char) -> Result<Self, Self::Error> {
+        match c {
+            'A' => Ok(Move::Rock),
+            'B' => Ok(Move::Paper),
+            'C' => Ok(Move::Scissors),
+            _ => Err(color_eyre::eyre::eyre!("not a valid move: {c:?}")),
         }
+    }
+}
 
-        iters.next();
-
-        if let Some(second) = iters.next() {
-            if second == 'X' {
-                round.second = Second::X;
-            } else if second == 'Y' {
-                round.second = Second::Y;
-            } else if second == 'Z' {
-                round.second = Second::Z;
-            }
+impl Move {
+    fn find_missing_move(theirs: &Move, outcome: &Outcome) -> Self {
+        match outcome {
+            Outcome::Win => match theirs {
+                Move::Rock => Move::Paper,
+                Move::Paper => Move::Scissors,
+                Move::Scissors => Move::Rock,
+            },
+            Outcome::Draw => *theirs,
+            Outcome::Loss => match theirs {
+                Move::Rock => Move::Scissors,
+                Move::Paper => Move::Rock,
+                Move::Scissors => Move::Paper,
+            },
         }
+    }
 
-        result.push(round)
-    };
-    result
+    fn get_points(&self) -> usize {
+        match self {
+            Move::Rock => 1,
+            Move::Paper => 2,
+            Move::Scissors => 3,
+        }
+    }
+}
+
+fn main() -> color_eyre::Result<()> {
+    color_eyre::install()?;
+
+    let mut sum: usize = 0;
+    for round in include_str!("../input.txt")
+        .lines()
+        .map(|line| line.parse::<Round>())
+    {
+        let round = round?;
+        sum += round.score_round();
+    }
+    println!("{sum}");
+    Ok(())
 }
