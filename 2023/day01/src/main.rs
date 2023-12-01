@@ -1,3 +1,24 @@
+use regex::Regex;
+
+static DIGITS: [&str; 10] = [
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+];
+
+fn get_index_value(digit_str: String) -> usize {
+    match DIGITS.iter().position(|s| digit_str.eq(s)) {
+        Some(val) => val,
+        None => panic!("How did you find an invalid digit?"),
+    }
+}
+
+fn get_number_from_text(digit_str: String) -> usize {
+    if let Ok(val) = digit_str.parse::<usize>() {
+        return val;
+    } else {
+        return get_index_value(digit_str);
+    };
+}
+
 fn main() {
     let ex1 = include_str!("ex1.txt");
     let ex2 = include_str!("ex2.txt");
@@ -9,56 +30,35 @@ fn main() {
 }
 
 fn part_one(raw: &str) -> usize {
-    let mut result = 0;
-    let lines = raw.lines();
-    for line in lines {
-        let digits = line
-            .split("")
-            .filter(|s| s.parse::<usize>().ok().is_some())
-            .collect::<Vec<&str>>();
-        let (first, last) = (digits.first().unwrap(), digits.last().unwrap());
-        let new_str = format!("{first}{last}");
-        let val = new_str.parse::<usize>().unwrap();
-        result += val;
-    }
-    result
+    raw.lines().map(|line| parse_line(line, false)).sum()
 }
 
-fn parse_line(line: &str, reverse: bool) -> String {
-    let digits = vec![
-        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
-    ];
-    let result = String::from("0");
-    let mut strs = vec![];
-    for letter in line.split("") {
-        if letter.parse::<usize>().is_ok() {
-            return letter.to_string();
-        }
-        if reverse {
-            strs.insert(0, letter);
-        } else {
-            strs.push(letter);
-        }
-        for  test_digit in digits.iter() {
-            if strs.join("").contains(test_digit) {
-                return digits.clone().iter().position(|w| w==test_digit).unwrap().to_string();
-            }
-        }
+fn parse_line(line: &str, is_part_two: bool) -> usize {
+    let re_numbers = Regex::new(r"(\d)").unwrap();
+    let re_numbers_and_words =
+        Regex::new(r"(0|1|2|3|4|5|6|7|8|9|zero|one|two|three|four|five|six|seven|eight|nine)")
+            .unwrap();
+
+    let first: usize;
+    let last: usize;
+    if is_part_two {
+        let caps: Vec<_> = re_numbers_and_words
+            .find_iter(line)
+            .map(|s| s.as_str())
+            .collect();
+        let (first_str, last_str) = (caps.first().unwrap(), caps.last().unwrap());
+        first = get_number_from_text(first_str.to_string());
+        last = get_number_from_text(last_str.to_string());
+    } else {
+        let caps: Vec<_> = re_numbers.find_iter(line).map(|s| s.as_str()).collect();
+        let (first_str, last_str) = (caps.first().unwrap(), caps.last().unwrap());
+        first = get_number_from_text(first_str.to_string());
+        last = get_number_from_text(last_str.to_string());
     }
-    result
+
+    first * 10 + last
 }
 
 fn part_two(raw: &str) -> usize {
-    let mut result = 0;
-    let lines = raw.lines();
-    for line in lines {
-        let mut digits: Vec<String> = vec![];
-        digits.push(parse_line(line, false));
-        let reversed = &line.clone().rsplit("").collect::<Vec<&str>>().join("");
-        digits.push(parse_line(reversed, true));
-        let new_str = format!("{}{}", digits.first().unwrap(), digits.last().unwrap());
-        let val = new_str.parse::<usize>().unwrap();
-        result += val;
-    }
-    result
+    raw.lines().map(|line| parse_line(line, true)).sum()
 }
