@@ -8,13 +8,13 @@ fn main() {
 
 fn part_one(raw: &str) -> usize {
     let puzzle = Puzzle::new(raw, true);
-    puzzle.score()
+    puzzle.score(true)
 }
 
 
 fn part_two(raw: &str) -> usize {
     let puzzle = Puzzle::new(raw, false);
-    puzzle.score()
+    puzzle.score(false)
 }
 
 #[cfg(test)]
