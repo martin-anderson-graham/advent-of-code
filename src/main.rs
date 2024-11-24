@@ -2,6 +2,7 @@ use std::env;
 
 use colorized::{Color, Colors};
 mod cli;
+mod http;
 mod puzzle;
 use dotenvy::dotenv;
 use puzzle::PuzzleExecutor;
@@ -27,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // TODO
     puzzle_executor.run();
     // TODO
-    puzzle_args.submit();
+    puzzle_executor.submit();
 
     println!();
 

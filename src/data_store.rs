@@ -37,4 +37,41 @@ impl PuzzleInputRow {
             _ => Err(()),
         }
     }
+
+    pub async fn upsert_puzzle_input(
+        day: &String,
+        year: &String,
+        body: &String,
+        pool: &Pool<Sqlite>,
+    ) {
+        match sqlx::query!(
+            "
+        INSERT INTO inputs (day, year, body)
+        VALUES (?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            day = excluded.day,
+            year = excluded.year,
+            body = excluded.body
+        ",
+            day,
+            year,
+            body,
+        )
+        .execute(pool)
+        .await
+        {
+            Ok(_) => {
+                println!(
+                    " -- {} successfully stored input",
+                    "\u{2714}".color(Colors::GreenFg)
+                );
+            }
+            _ => {
+                println!(
+                    " -- {} failed to stored input",
+                    "\u{2714}".color(Colors::RedFg)
+                );
+            }
+        }
+    }
 }

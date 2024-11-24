@@ -1,7 +1,7 @@
 use colorized::{Color, Colors};
 use sqlx::{Pool, Sqlite};
 
-use crate::{cli::PuzzleArgs, data_store::PuzzleInputRow};
+use crate::{cli::PuzzleArgs, data_store::PuzzleInputRow, http::AocHttpClient};
 
 // TODO: input part 1 or 2?
 pub struct PuzzleExecutor {
@@ -25,28 +25,28 @@ impl PuzzleExecutor {
 
     async fn get_puzzle_input_body(&mut self) {
         // load from local db or server
-        let input_row = match PuzzleInputRow::get(&self.day, &self.year, &self.pool).await {
-            Ok(row) => row,
-            _ => {
-                println!(
-                    " -- didn't find input, {}",
-                    "fetching".color(Colors::YellowFg)
-                );
-                // TODO:
-                println!(
-                    "{}",
-                    " -- implement fetching here"
-                        .color(Colors::BlackFg)
-                        .color(Colors::RedBg)
-                );
-                std::process::exit(1);
-            }
-        };
-
-        self.input = input_row.body;
+        let (input_body, need_to_persist) =
+            match PuzzleInputRow::get(&self.day, &self.year, &self.pool).await {
+                Ok(row) => (row.body, false),
+                _ => {
+                    println!(
+                        " -- didn't find input, {}",
+                        "fetching".color(Colors::YellowFg)
+                    );
+                    (
+                        AocHttpClient::fetch_puzzle_input(&self.day, &self.year).await,
+                        true,
+                    )
+                }
+            };
+        if need_to_persist {
+            PuzzleInputRow::upsert_puzzle_input(&self.day, &self.year, &input_body, &self.pool)
+                .await;
+        }
+        self.input = input_body;
     }
 
-    pub fn run(self) {
+    pub fn run(&self) {
         // TODO
         // self.start_timing()
         // TODO:
@@ -55,7 +55,7 @@ impl PuzzleExecutor {
         // self.print_timing()
     }
 
-    pub fn submit(self) {
+    pub fn submit(&self) {
         // TODO
         // check db for existing solution
         // check db for pending timeout

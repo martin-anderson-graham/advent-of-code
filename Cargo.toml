@@ -12,3 +12,4 @@ dotenvy_macro = "0.15.7"
 sqlx = {version = "0.8.2",  features = [ "sqlite", "runtime-tokio", "tls-native-tls" ] }
 tokio = {version = "1.41.1", features=["rt", "macros"]}
 dotenvy = "0.15.7"
+reqwest = "0.12.9"
