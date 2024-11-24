@@ -3,6 +3,8 @@ node_modules
 target
 input.txt
 .env
+/.sqlx
+aoc.db*
 
 # Added by cargo
 

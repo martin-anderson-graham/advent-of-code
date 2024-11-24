@@ -1,18 +1,35 @@
+use std::env;
+
 use colorized::{Color, Colors};
 mod cli;
+mod puzzle;
+use dotenvy::dotenv;
+use puzzle::PuzzleExecutor;
+use sqlx::SqlitePool;
+mod data_store;
+use tokio;
 
 #[macro_use]
 extern crate dotenvy_macro;
 
-fn main() {
+#[tokio::main(flavor = "current_thread")]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    dotenv()?;
+
     println!();
     println!("{}", "Starting:".color(Colors::GreenFg));
     let puzzle_args = cli::get_cli_args();
 
-    println!(
-        " -- executing {}/{}",
-        puzzle_args.year.color(Colors::BlueFg),
-        puzzle_args.day.color(Colors::YellowFg)
-    );
+    let pool = SqlitePool::connect(&env::var("DATABASE_URL").unwrap()).await?;
+
+    let puzzle_executor = PuzzleExecutor::new(puzzle_args, pool).await;
+
+    // TODO
+    puzzle_executor.run();
+    // TODO
+    puzzle_args.submit();
+
     println!();
+
+    return Ok(());
 }

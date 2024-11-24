@@ -7,7 +7,7 @@ struct Args {
     #[arg(long, short)]
     day: Option<String>,
 
-    #[arg(long, short, default_value=dotenv!("YEAR"))]
+    #[arg(long, short, default_value=dotenv!("DEFAULT_YEAR"))]
     year: String,
 }
 
@@ -34,6 +34,12 @@ pub fn get_cli_args() -> PuzzleArgs {
             std::process::exit(1);
         }
     };
+
+    println!(
+        " -- loading {}/{}",
+        args.year.color(Colors::BlueFg),
+        day.color(Colors::YellowFg)
+    );
     return PuzzleArgs {
         day,
         year: args.year,
