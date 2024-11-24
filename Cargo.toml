@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.21", features = ["derive"] }
+colorized = "1.0.0"
 dotenvy_macro = "0.15.7"
