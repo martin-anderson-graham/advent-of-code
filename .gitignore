@@ -2,3 +2,8 @@ workspace.code-workspace
 node_modules
 target
 input.txt
+.env
+
+# Added by cargo
+
+/target
