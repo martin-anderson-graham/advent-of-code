@@ -9,7 +9,6 @@ use puzzle::PuzzleExecutor;
 use sqlx::SqlitePool;
 mod data_store;
 use tokio;
-use year2017;
 
 #[macro_use]
 extern crate dotenvy_macro;
