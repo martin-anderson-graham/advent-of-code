@@ -1,6 +1,8 @@
 use colorized::{Color, Colors};
 use sqlx::{Pool, Sqlite};
 
+use crate::puzzle::ValidYears;
+
 #[derive(Debug)]
 pub struct PuzzleInputRow {
     #[allow(dead_code)]
@@ -15,14 +17,15 @@ pub struct PuzzleInputRow {
 impl PuzzleInputRow {
     pub async fn get(
         day: &String,
-        year: &String,
+        year: &ValidYears,
         pool: &Pool<Sqlite>,
     ) -> Result<PuzzleInputRow, ()> {
+        let year_str = year.to_string();
         match sqlx::query_as!(
             PuzzleInputRow,
             "SELECT * FROM inputs WHERE day = ? AND year = ? LIMIT 1",
             day,
-            year
+            year_str,
         )
         .fetch_one(pool)
         .await
@@ -40,10 +43,11 @@ impl PuzzleInputRow {
 
     pub async fn upsert_puzzle_input(
         day: &String,
-        year: &String,
+        year: &ValidYears,
         body: &String,
         pool: &Pool<Sqlite>,
     ) {
+        let year_str = year.to_string();
         match sqlx::query!(
             "
         INSERT INTO inputs (day, year, body)
@@ -54,7 +58,7 @@ impl PuzzleInputRow {
             body = excluded.body
         ",
             day,
-            year,
+            year_str,
             body,
         )
         .execute(pool)

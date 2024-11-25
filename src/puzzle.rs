@@ -3,11 +3,38 @@ use sqlx::{Pool, Sqlite};
 
 use crate::{cli::PuzzleArgs, data_store::PuzzleInputRow, http::AocHttpClient};
 
-// TODO: input part 1 or 2?
+pub enum ValidYears {
+    Year2024,
+    Year2017,
+}
+impl ValidYears {
+    fn get_from_string(year: &String) -> Self {
+        match year.as_str() {
+            "2024" => ValidYears::Year2024,
+            "2017" => ValidYears::Year2017,
+            val => {
+                println!(
+                    " -- {} is not a valid year, {}",
+                    val,
+                    "aborting".color(Colors::RedFg)
+                );
+                std::process::exit(1);
+            }
+        }
+    }
+
+    pub fn to_string(&self) -> String {
+        match self {
+            ValidYears::Year2024 => "2024".to_string(),
+            ValidYears::Year2017 => "2017".to_string(),
+        }
+    }
+}
+
 pub struct PuzzleExecutor {
     input: String,
     day: String,
-    year: String,
+    year: ValidYears,
     pool: Pool<Sqlite>,
 }
 
@@ -16,7 +43,7 @@ impl PuzzleExecutor {
         let mut executor = PuzzleExecutor {
             input: String::from(""),
             day: puzzle_args.day,
-            year: puzzle_args.year,
+            year: ValidYears::get_from_string(&puzzle_args.year),
             pool,
         };
         executor.get_puzzle_input_body().await;
@@ -49,6 +76,10 @@ impl PuzzleExecutor {
     pub fn run(&self) {
         // TODO
         // self.start_timing()
+        match self.year {
+            ValidYears::Year2017 => year2017::run(&self.day, self.input.clone()),
+            _ => {}
+        }
         // TODO:
         // self.end_timing()
         // TODO:
