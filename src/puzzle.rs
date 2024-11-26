@@ -74,16 +74,10 @@ impl PuzzleExecutor {
     }
 
     pub fn run(&self) {
-        // TODO
-        // self.start_timing()
         match self.year {
             ValidYears::Year2017 => year2017::run(&self.day, self.input.clone()),
             _ => {}
         }
-        // TODO:
-        // self.end_timing()
-        // TODO:
-        // self.print_timing()
     }
 
     pub fn submit(&self) {
