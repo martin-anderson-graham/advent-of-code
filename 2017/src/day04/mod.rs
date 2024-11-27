@@ -13,7 +13,7 @@ mod tests {
 aa bb cc dd aa
 aa bb cc dd aaa",
         );
-        let puzz = Day04::new(&input);
+        let mut puzz = Day04::new(&input);
         assert_eq!(puzz.part_one(), "2")
     }
 
@@ -26,7 +26,7 @@ a ab abc abd abf abj
 iiii oiii ooii oooi oooo
 oiii ioii iioi iiio",
         );
-        let puzz = Day04::new(&input);
+        let mut puzz = Day04::new(&input);
         assert_eq!(puzz.part_two(), Some(String::from("3")));
     }
 }

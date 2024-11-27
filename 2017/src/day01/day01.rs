@@ -9,10 +9,10 @@ impl PuzzleParts for Day01{
             input: input.clone()
         }
     }
-    fn part_one(&self) -> String {
+    fn part_one(&mut self) -> String {
         part_one(&self.input).to_string()
     }
-    fn part_two(&self) -> Option<String> {
+    fn part_two(&mut self) -> Option<String> {
         Some(part_two(&self.input).to_string())
     }
 }

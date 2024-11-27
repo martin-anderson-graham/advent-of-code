@@ -11,7 +11,7 @@ mod tests {
         let input = String::from("5 1 9 5
 7 5 3
 2 4 6 8");
-        let puzz = Day02::new(&input);
+        let mut  puzz = Day02::new(&input);
         assert_eq!(puzz.part_one(), "18");
     }
 
@@ -20,7 +20,7 @@ mod tests {
         let input = String::from("5 9 2 8
 9 4 7 3
 3 8 6 5");
-        let puzz = Day02::new(&input);
+        let  mut puzz = Day02::new(&input);
         assert_eq!(puzz.part_two(), Some("9".to_string()));
     }
 }

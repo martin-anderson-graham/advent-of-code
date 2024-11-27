@@ -7,11 +7,11 @@ pub struct Day04 {
 }
 
 impl PuzzleParts for Day04 {
-    fn part_one(&self) -> String {
+    fn part_one(&mut self) -> String {
         let result = part_one(&self.input);
         result.to_string()
     }
-    fn part_two(&self) -> Option<String> {
+    fn part_two(&mut self) -> Option<String> {
         let result = part_two(&self.input);
         Some(result.to_string())
     }

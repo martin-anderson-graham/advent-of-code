@@ -78,7 +78,7 @@ impl PuzzleExecutor {
     }
 
     pub fn run(&self) {
-        let puzzle = match self.year {
+        let mut puzzle = match self.year {
             ValidYears::Year2017 => Year2017::new(&self.day, &self.input),
             ValidYears::Year2024 => {
                 println!("TBD");
@@ -91,8 +91,15 @@ impl PuzzleExecutor {
         println!(" -- part one result is {}", p_1.color(Colors::YellowFg));
         println!(" -- Time to run part one is {:?}", elapsed_1);
 
+        let mut puzzle_2 = match self.year {
+            ValidYears::Year2017 => Year2017::new(&self.day, &self.input),
+            ValidYears::Year2024 => {
+                println!("TBD");
+                std::process::exit(1);
+            }
+        };
         let start_2 = std::time::Instant::now();
-        let p_2 = puzzle.part_two();
+        let p_2 = puzzle_2.part_two();
         let elapsed_2 = start_2.elapsed();
         if let Some(res) = p_2 {
             println!(" -- part two result is {}", res.color(Colors::GreenFg));
