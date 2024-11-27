@@ -1,8 +1,20 @@
-pub fn run(input: String) {
-    let p_one = part_one(&input);
-    println!(" -- part 1 - {}", p_one);
-    let p_two = part_two(&input);
-    println!(" -- part 2 - {}", p_two);
+use common::PuzzleParts;
+
+pub struct Day01 {
+    input: String,
+}
+impl PuzzleParts for Day01{
+    fn new(input: &String) -> Self {
+        Self{
+            input: input.clone()
+        }
+    }
+    fn part_one(&self) -> String {
+        part_one(&self.input).to_string()
+    }
+    fn part_two(&self) -> Option<String> {
+        Some(part_two(&self.input).to_string())
+    }
 }
 
 pub fn part_one(input: &String) -> usize {

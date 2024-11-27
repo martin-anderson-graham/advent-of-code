@@ -1,5 +1,7 @@
 use colorized::{Color, Colors};
+use common::YearPuzzle;
 use sqlx::{Pool, Sqlite};
+use year2017::Year2017;
 
 use crate::{cli::PuzzleArgs, data_store::PuzzleInputRow, http::AocHttpClient};
 
@@ -38,6 +40,8 @@ pub struct PuzzleExecutor {
     pool: Pool<Sqlite>,
 }
 
+// TODO run multiple times for better test timing averages
+
 impl PuzzleExecutor {
     pub async fn new(puzzle_args: PuzzleArgs, pool: Pool<Sqlite>) -> Self {
         let mut executor = PuzzleExecutor {
@@ -74,9 +78,25 @@ impl PuzzleExecutor {
     }
 
     pub fn run(&self) {
-        match self.year {
-            ValidYears::Year2017 => year2017::run(&self.day, self.input.clone()),
-            _ => {}
+        let puzzle = match self.year {
+            ValidYears::Year2017 => Year2017::new(&self.day, &self.input),
+            ValidYears::Year2024 => {
+                println!("TBD");
+                std::process::exit(1);
+            }
+        };
+        let start_1 = std::time::Instant::now();
+        let p_1 = puzzle.part_one();
+        let elapsed_1 = start_1.elapsed();
+        println!(" -- part one result is {}", p_1.color(Colors::YellowFg));
+        println!(" -- Time to run part one is {:?}", elapsed_1);
+
+        let start_2 = std::time::Instant::now();
+        let p_2 = puzzle.part_two();
+        let elapsed_2 = start_2.elapsed();
+        if let Some(res) = p_2 {
+            println!(" -- part two result is {}", res.color(Colors::GreenFg));
+            println!(" -- Time to run part two is {:?}", elapsed_2);
         }
     }
 

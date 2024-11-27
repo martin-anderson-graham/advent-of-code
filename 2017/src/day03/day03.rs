@@ -1,15 +1,29 @@
 use std::collections::HashMap;
 
-pub fn run(input: String) {
-    let p_one = part_one(&input);
-    println!(" -- part 1 - {}", p_one);
-    let p_two = part_two(&input);
-    println!(" -- part 2 - {}", p_two);
+use common::PuzzleParts;
+
+pub struct Day03 {
+    input: String,
+}
+
+impl PuzzleParts for Day03{
+    fn part_one(&self) -> String {
+       let result = part_one(&self.input); 
+       result.to_string()
+    } 
+    fn part_two(&self) -> Option<String> {
+       let result = part_two(&self.input); 
+       Some(result.to_string())
+    }
+    fn new(input: &String) -> Self {
+        Day03{
+            input: input.clone(),
+        }
+    }
 }
 
 #[derive(Debug)]
 struct Ring {
-    i: isize,
     corners: Vec<isize>,
 }
 
@@ -21,7 +35,6 @@ impl Ring {
         let second = third - (side_length - 1);
         let first = second - (side_length - 1);
         Self {
-            i,
             corners: vec![first, second, third, fourth],
         }
     }
@@ -31,7 +44,7 @@ fn parse(input: &String) -> isize {
     input.trim().parse::<isize>().unwrap()
 }
 
-pub fn part_one(input: &String) -> isize {
+fn part_one(input: &String) -> isize {
     let target = parse(input);
     let mut i = 0;
     loop {
@@ -126,7 +139,7 @@ impl Board {
     }
 }
 
-pub fn part_two(input: &String) -> usize {
+fn part_two(input: &String) -> usize {
     let mut board = Board {
         current_ring: 0,
         points: HashMap::new(),

@@ -1,8 +1,21 @@
-pub fn run(input: String) {
-    let p_one = part_one(&input);
-    println!(" -- part 1 - {}", p_one);
-    let p_two = part_two(&input);
-    println!(" -- part 2 - {}", p_two);
+use common::PuzzleParts;
+
+pub struct Day02 {
+    input: String,
+}
+
+impl PuzzleParts for Day02 {
+    fn new(input: &String) -> Self {
+        Self {
+            input: input.clone(),
+        }
+    }
+    fn part_one(&self) -> String {
+        part_one(&self.input).to_string()
+    }
+    fn part_two(&self) -> Option<String> {
+        Some(part_two(&self.input).to_string())
+    }
 }
 
 pub fn part_one(input: &String) -> usize {
@@ -20,18 +33,18 @@ pub fn part_two(input: &String) -> usize {
     parse_input(input)
         .into_iter()
         .map(|row| {
-            for first in 0..row.len()-1{
-                for second in first+1..row.len(){
+            for first in 0..row.len() - 1 {
+                for second in first + 1..row.len() {
                     let first_val = row[first];
                     let second_val = row[second];
                     if first_val % second_val == 0 {
-                         return first_val / second_val
-                    } else if second_val % first_val == 0{
-                        return second_val/first_val
+                        return first_val / second_val;
+                    } else if second_val % first_val == 0 {
+                        return second_val / first_val;
                     }
                 }
             }
-            return 0
+            return 0;
         })
         .sum()
 }

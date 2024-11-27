@@ -13,4 +13,5 @@ sqlx = {version = "0.8.2",  features = [ "sqlite", "runtime-tokio", "tls-native-
 tokio = {version = "1.41.1", features=["rt", "macros"]}
 dotenvy = "0.15.7"
 reqwest = "0.12.9"
+common = { path = "./common" }
 year2017 = { path = "./2017" }

@@ -26,10 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let puzzle_executor = PuzzleExecutor::new(puzzle_args, pool).await;
 
     // TODO
-    let start = std::time::Instant::now();
     puzzle_executor.run();
-    let elapsed = start.elapsed();
-    println!(" -- Time to run both parts is {:?}", elapsed);
     // TODO
     puzzle_executor.submit();
 

@@ -2,25 +2,33 @@ pub mod day01;
 
 #[cfg(test)]
 mod tests {
-    use crate::day01::day01::{part_one, part_two};
+    use common::PuzzleParts;
+
+    use crate::day01::day01::Day01;
 
     #[test]
     fn part_1(){
         let test_0 = String::from("1122");
-        assert_eq!(part_one(&test_0), 3);
+        let p_0 = Day01::new(&test_0);
+        assert_eq!(p_0.part_one(), "3");
         let test_1 = String::from("1111");
-        assert_eq!(part_one(&test_1), 4);
+        let p_1 = Day01::new(&test_1);
+        assert_eq!(p_1.part_one(), "4");
         let test_2 = String::from("91212129");
-        assert_eq!(part_one(&test_2), 9);
+        let p_2 = Day01::new(&test_2);
+        assert_eq!(p_2.part_one(), "9");
     }
 
     #[test]
     fn part_2(){
         let test_0 = String::from("1212");
-        assert_eq!(part_two(&test_0), 6);
+        let p_0 = Day01::new(&test_0);
+        assert_eq!(p_0.part_two(), Some("6".to_string()));
         let test_1 = String::from("123425");
-        assert_eq!(part_two(&test_1), 4);
+        let p_1 = Day01::new(&test_1);
+        assert_eq!(p_1.part_two(), Some(String::from("4")));
         let test_2 = String::from("123123");
-        assert_eq!(part_two(&test_2), 12);
+        let p_2 = Day01::new(&test_2);
+        assert_eq!(p_2.part_two(), Some(String::from("12")));
     }
 }
