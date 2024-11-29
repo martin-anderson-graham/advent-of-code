@@ -8,6 +8,7 @@ use day05::day05::Day05;
 use day06::day06::Day06;
 use day07::day07::Day07;
 use day08::day08::Day08;
+use day09::day09::Day09;
 
 mod day01;
 mod day02;
@@ -17,6 +18,7 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
 
 #[allow(dead_code)]
 pub enum Year2017{
@@ -28,6 +30,7 @@ pub enum Year2017{
     Day06(Day06),
     Day07(Day07),
     Day08(Day08),
+    Day09(Day09),
 }
 
 impl YearPuzzle for Year2017 {
@@ -41,6 +44,7 @@ impl YearPuzzle for Year2017 {
             "6" => Year2017::Day06(Day06::new(input)),
             "7" => Year2017::Day07(Day07::new(input)),
             "8" => Year2017::Day08(Day08::new(input)),
+            "9" => Year2017::Day09(Day09::new(input)),
             _ => {
                 println!(
                     " -- invalid day value was passed - {}",
@@ -60,6 +64,7 @@ impl YearPuzzle for Year2017 {
            Year2017::Day06(p)=> p.part_one(),
            Year2017::Day07(p)=> p.part_one(),
            Year2017::Day08(p)=> p.part_one(),
+           Year2017::Day09(p)=> p.part_one(),
        } 
     }
     fn part_two(&mut self) -> Option<String> {
@@ -72,6 +77,7 @@ impl YearPuzzle for Year2017 {
            Year2017::Day06(p)=> p.part_two(),
            Year2017::Day07(p)=> p.part_two(),
            Year2017::Day08(p)=> p.part_two(),
+           Year2017::Day09(p)=> p.part_two(),
        } 
     }
 }
