@@ -1,48 +1,30 @@
-use std::collections::HashMap;
+use std::collections::{BinaryHeap, HashMap};
 
 use common::PuzzleParts;
+use itertools::Itertools;
 
 pub struct Day01 {
-    list_one: Vec<isize>,
-    list_two: Vec<isize>,
-    hash_two: HashMap<isize, isize>,
+    list_one: BinaryHeap<usize>,
+    list_two: BinaryHeap<usize>,
+    hash_two: HashMap<usize, usize>,
 }
 
 impl Day01 {
     pub fn new(input: &String) -> Self {
-        let mut list_one = vec![];
-        let mut list_two = vec![];
-
-        input.trim().lines().for_each(|line| {
-            let mut items = line.split_whitespace();
-
-            list_one.push(
-                items
-                    .next()
-                    .expect("Didn't find the first item")
-                    .parse::<isize>()
-                    .expect("Found a non-numerical item"),
-            );
-            list_two.push(
-                items
-                    .next()
-                    .expect("Didn't find the second item")
-                    .parse::<isize>()
-                    .expect("Found a non-numerical item"),
-            );
-        });
-
-        let mut hash_two = HashMap::new();
-        list_two.iter().for_each(|val| {
-            match hash_two.get(val) {
-                Some(count) => hash_two.insert(*val, count + 1),
-                None => hash_two.insert(*val, 1),
-            };
-        });
+        let lists: (BinaryHeap<usize>, BinaryHeap<usize>) = input
+            .trim()
+            .lines()
+            .map(|line| {
+                line.split_once("   ")
+                    .map(|(l, r)| (r.parse::<usize>().unwrap(), l.parse::<usize>().unwrap()))
+                    .unwrap()
+            })
+            .unzip();
+        let hash_two = lists.1.iter().map(|v| *v).counts();
 
         Self {
-            list_one,
-            list_two,
+            list_one: lists.0,
+            list_two: lists.1,
             hash_two,
         }
     }
@@ -50,27 +32,23 @@ impl Day01 {
 
 impl PuzzleParts for Day01 {
     fn part_one(&mut self) -> String {
-        let mut sum = 0;
-
-        self.list_one.sort();
-        self.list_two.sort();
-
-        for i in 0..self.list_one.len() {
-            sum += (self.list_two[i] - self.list_one[i]).abs()
-        }
-
-        sum.to_string()
+        self.list_one
+            .clone()
+            .into_sorted_vec()
+            .iter()
+            .zip(self.list_two.clone().into_sorted_vec().iter())
+            .map(|(l, r)| l.abs_diff(*r))
+            .sum::<usize>()
+            .to_string()
     }
 
     fn part_two(&mut self) -> Option<String> {
-        let mut total = 0;
-        self.list_one.iter().for_each(|val| {
-            match self.hash_two.get(val){
-                Some(count) => total += *val * count,
-                None => (),
-            };
-        });
-
-            Some(total.to_string())
+        Some(
+            self.list_one
+                .iter()
+                .map(|val| self.hash_two.get(val).unwrap_or(&0) * *val)
+                .sum::<usize>()
+                .to_string(),
+        )
     }
 }
