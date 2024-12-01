@@ -131,7 +131,7 @@ impl PuzzleExecutor {
 
         if let Some(res) = p_2_answer {
             println!(
-                " -- {}result {} and is {}",
+                " -- {} result {} and is {}",
                 "Part Two".color(Colors::BlueFg),
                 self.get_answer_state(Parts::Two, &res).await,
                 res.color(Colors::GreenFg)

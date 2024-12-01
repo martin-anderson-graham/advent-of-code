@@ -98,13 +98,7 @@ impl PuzzleAnswerRow {
         .fetch_all(pool)
         .await
         {
-            Ok(answers) => {
-                println!(
-                    " -- {} found input locally",
-                    "\u{2714}".color(Colors::GreenFg)
-                );
-                Ok(answers)
-            }
+            Ok(answers) => Ok(answers),
             _ => Err(()),
         }
     }
