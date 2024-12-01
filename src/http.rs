@@ -31,7 +31,7 @@ impl AocHttpClient {
 
         let aoc_input_url = format!(
             "https://adventofcode.com/{}/day/{}/input",
-            year.to_string(),
+            year,
             day
         );
 

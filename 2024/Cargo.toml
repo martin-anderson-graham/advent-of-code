@@ -4,3 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+colorized = "1.0.0"
+common = { path = "../common" }

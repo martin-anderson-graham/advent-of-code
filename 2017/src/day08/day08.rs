@@ -176,7 +176,11 @@ fn process(&mut self) {
         });
 }
 }
-
+impl Day08 {
+    pub fn new(input: &String) -> Self {
+        Day08::from_str(input).unwrap()
+    }
+}
 
 impl PuzzleParts for Day08 {
     fn part_one(&mut self) -> String {
@@ -189,7 +193,4 @@ impl PuzzleParts for Day08 {
         Some(self.registers_max.values().max().unwrap().to_string())
     }
 
-    fn new(input: &String) -> Self {
-        Day08::from_str(input).unwrap()
-    }
 }

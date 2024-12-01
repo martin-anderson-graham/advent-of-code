@@ -15,3 +15,4 @@ dotenvy = "0.15.7"
 reqwest = "0.12.9"
 common = { path = "./common" }
 year2017 = { path = "./2017" }
+year2024 = { path = "./2024" }

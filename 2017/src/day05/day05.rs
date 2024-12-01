@@ -7,13 +7,17 @@ pub struct Day05 {
     instructions: HashMap<isize, isize>,
 }
 
-impl PuzzleParts for Day05 {
-    fn new(input: &String) -> Self {
+impl Day05 {
+ pub   fn new(input: &String) -> Self {
         Self {
             cursor_index: 0,
             instructions: Day05::parse(input),
         }
     }
+
+}
+
+impl PuzzleParts for Day05 {
     fn part_one(&mut self) -> String {
         let mut step_count = 0;
         loop {

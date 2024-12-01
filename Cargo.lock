@@ -30,6 +30,7 @@ dependencies = [
  "sqlx",
  "tokio",
  "year2017",
+ "year2024",
 ]
 
 [[package]]
@@ -2528,6 +2529,14 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 
 [[package]]
 name = "year2017"
+version = "0.1.0"
+dependencies = [
+ "colorized",
+ "common",
+]
+
+[[package]]
+name = "year2024"
 version = "0.1.0"
 dependencies = [
  "colorized",

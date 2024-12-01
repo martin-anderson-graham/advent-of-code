@@ -38,7 +38,10 @@ impl PuzzleParts for Day07 {
         )
     }
 
-    fn new(input: &String) -> Self {
+}
+
+impl Day07 {
+    pub fn new(input: &String) -> Self {
         let mut discs = HashMap::new();
         input.trim().lines().for_each(|l| {
             match Disc::from_str(l) {
@@ -51,9 +54,6 @@ impl PuzzleParts for Day07 {
         });
         Self { discs }
     }
-}
-
-impl Day07 {
     fn build_tree(&mut self) {
         let mut holder_held: HashMap<String, Vec<String>> = HashMap::new();
         self.discs.iter_mut().for_each(|(holder_name, disc)| {

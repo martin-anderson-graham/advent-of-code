@@ -1,19 +1,31 @@
+use std::fmt;
+
 use colorized::{Color, Colors};
-use common::YearPuzzle;
+use common::PuzzleParts;
 use sqlx::{Pool, Sqlite};
 use year2017::Year2017;
+use year2024::Year2024;
 
 use crate::{cli::PuzzleArgs, data_store::PuzzleInputRow, http::AocHttpClient};
 
 pub enum ValidYears {
-    Year2024,
-    Year2017,
+    Year2024(String),
+    Year2017(String),
 }
+impl fmt::Display for ValidYears{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", match self {
+                ValidYears::Year2017(year) => year,
+                ValidYears::Year2024(year) => year,
+            })
+    }
+}
+
 impl ValidYears {
     fn get_from_string(year: &String) -> Self {
         match year.as_str() {
-            "2024" => ValidYears::Year2024,
-            "2017" => ValidYears::Year2017,
+            "2024" => ValidYears::Year2024("2024".to_string()),
+            "2017" => ValidYears::Year2017("2017".to_string()),
             val => {
                 println!(
                     " -- {} is not a valid year, {}",
@@ -24,11 +36,19 @@ impl ValidYears {
             }
         }
     }
+}
 
-    pub fn to_string(&self) -> String {
-        match self {
-            ValidYears::Year2024 => "2024".to_string(),
-            ValidYears::Year2017 => "2017".to_string(),
+struct Year<'a> {
+    puzzle: Box<dyn PuzzleParts + 'a>,
+}
+
+impl Year<'_> {
+    fn new(year: &ValidYears, day: &String, input: &String) -> Self {
+        Self {
+            puzzle: match year {
+                ValidYears::Year2017(_) => Year2017::new(&day, &input),
+                ValidYears::Year2024(_) => Year2024::new(&day, &input),
+            },
         }
     }
 }
@@ -78,28 +98,17 @@ impl PuzzleExecutor {
     }
 
     pub fn run(&self) {
-        let mut puzzle = match self.year {
-            ValidYears::Year2017 => Year2017::new(&self.day, &self.input),
-            ValidYears::Year2024 => {
-                println!("TBD");
-                std::process::exit(1);
-            }
-        };
+        let mut year = Year::new(&self.year, &self.day, &self.input);
         let start_1 = std::time::Instant::now();
-        let p_1 = puzzle.part_one();
+        let p_1 = year.puzzle.part_one();
         let elapsed_1 = start_1.elapsed();
         println!(" -- part one result is {}", p_1.color(Colors::YellowFg));
         println!(" -- Time to run part one is {:?}", elapsed_1);
 
-        let mut puzzle_2 = match self.year {
-            ValidYears::Year2017 => Year2017::new(&self.day, &self.input),
-            ValidYears::Year2024 => {
-                println!("TBD");
-                std::process::exit(1);
-            }
-        };
+        // we recreate it so clear out any state
+        let mut year = Year::new(&self.year, &self.day, &self.input);
         let start_2 = std::time::Instant::now();
-        let p_2 = puzzle_2.part_two();
+        let p_2 = year.puzzle.part_two();
         let elapsed_2 = start_2.elapsed();
         if let Some(res) = p_2 {
             println!(" -- part two result is {}", res.color(Colors::GreenFg));

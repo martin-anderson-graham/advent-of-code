@@ -8,22 +8,8 @@ pub struct Day10 {
     skip_size: usize,
 }
 
-impl PuzzleParts for Day10 {
-    fn part_one(&mut self) -> String {
-        self.process(Parts::One);
-        (self.rope[0] * self.rope[1]).to_string()
-    }
-
-    fn part_two(&mut self) -> Option<String> {
-        for _ in 0..64 {
-            self.process(Parts::Two);
-        }
-
-        let dense_hash = self.get_dense_hash();
-        Some(dense_hash.iter().map(|n| format!("{:02x}", n)).collect::<Vec<_>>().join(""))
-    }
-
-    fn new(input: &String) -> Self {
+impl Day10 {
+    pub fn new(input: &String) -> Self {
         Self {
             lengths_1: input
                 .trim()
@@ -41,6 +27,23 @@ impl PuzzleParts for Day10 {
             skip_size: 0,
         }
     }
+}
+
+impl PuzzleParts for Day10 {
+    fn part_one(&mut self) -> String {
+        self.process(Parts::One);
+        (self.rope[0] * self.rope[1]).to_string()
+    }
+
+    fn part_two(&mut self) -> Option<String> {
+        for _ in 0..64 {
+            self.process(Parts::Two);
+        }
+
+        let dense_hash = self.get_dense_hash();
+        Some(dense_hash.iter().map(|n| format!("{:02x}", n)).collect::<Vec<_>>().join(""))
+    }
+
 }
 
 enum Parts {

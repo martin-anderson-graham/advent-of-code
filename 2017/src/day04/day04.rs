@@ -6,6 +6,15 @@ pub struct Day04 {
     input: String,
 }
 
+impl Day04 {
+
+    pub fn new(input: &String) -> Self {
+        Day04 {
+            input: input.clone(),
+        }
+    }
+}
+
 impl PuzzleParts for Day04 {
     fn part_one(&mut self) -> String {
         let result = part_one(&self.input);
@@ -14,11 +23,6 @@ impl PuzzleParts for Day04 {
     fn part_two(&mut self) -> Option<String> {
         let result = part_two(&self.input);
         Some(result.to_string())
-    }
-    fn new(input: &String) -> Self {
-        Day04 {
-            input: input.clone(),
-        }
     }
 }
 

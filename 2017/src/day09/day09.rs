@@ -5,6 +5,16 @@ pub struct Day09 {
     pub cleaned_input: String,
 }
 
+impl Day09 {
+    pub fn new(input: &String) -> Self {
+        Self {
+            input: input.to_string(),
+            cleaned_input: String::from(""),
+        }
+    }
+
+}
+
 impl PuzzleParts for Day09 {
     fn part_one(&mut self) -> String {
         self.remove_garbage();
@@ -15,12 +25,6 @@ impl PuzzleParts for Day09 {
         Some(self.remove_garbage().to_string())
     }
 
-    fn new(input: &String) -> Self {
-        Self {
-            input: input.to_string(),
-            cleaned_input: String::from(""),
-        }
-    }
 }
 
 impl Day09 {

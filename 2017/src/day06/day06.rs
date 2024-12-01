@@ -14,14 +14,18 @@ pub struct Day06 {
     seen: HashMap<String, Hashed>,
 }
 
-impl PuzzleParts for Day06 {
-    fn new(input: &String) -> Self {
+impl Day06 {
+pub    fn new(input: &String) -> Self {
         Self {
             blocks: Day06::parse(input),
             seen: HashMap::new(),
         }
     }
 
+
+}
+
+impl PuzzleParts for Day06 {
     fn part_one(&mut self) -> String {
         self.process(2)
     }

@@ -3,12 +3,15 @@ use common::PuzzleParts;
 pub struct Day01 {
     input: String,
 }
-impl PuzzleParts for Day01{
-    fn new(input: &String) -> Self {
+
+impl Day01 {
+    pub fn new(input: &String) -> Self {
         Self{
             input: input.clone()
         }
     }
+}
+impl PuzzleParts for Day01{
     fn part_one(&mut self) -> String {
         part_one(&self.input).to_string()
     }
