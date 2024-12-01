@@ -12,12 +12,16 @@ pub enum ValidYears {
     Year2024(String),
     Year2017(String),
 }
-impl fmt::Display for ValidYears{
+impl fmt::Display for ValidYears {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(f, "{}", match self {
+        write!(
+            f,
+            "{}",
+            match self {
                 ValidYears::Year2017(year) => year,
                 ValidYears::Year2024(year) => year,
-            })
+            }
+        )
     }
 }
 

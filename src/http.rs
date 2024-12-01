@@ -29,11 +29,7 @@ impl AocHttpClient {
     pub async fn fetch_puzzle_input(day: &String, year: &ValidYears) -> String {
         let client = AocHttpClient::get_client();
 
-        let aoc_input_url = format!(
-            "https://adventofcode.com/{}/day/{}/input",
-            year,
-            day
-        );
+        let aoc_input_url = format!("https://adventofcode.com/{}/day/{}/input", year, day);
 
         let resp = client
             .get(aoc_input_url)
