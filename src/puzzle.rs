@@ -6,7 +6,14 @@ use sqlx::{Pool, Sqlite};
 use year2017::Year2017;
 use year2024::Year2024;
 
-use crate::{cli::PuzzleArgs, data_store::PuzzleInputRow, http::AocHttpClient};
+use crate::{
+    cli::PuzzleArgs,
+    data_store::{
+        answer::{AnswerState, Parts, PuzzleAnswerRow},
+        input::PuzzleInputRow,
+    },
+    http::AocHttpClient,
+};
 
 pub enum ValidYears {
     Year2024(String),
@@ -101,23 +108,45 @@ impl PuzzleExecutor {
         self.input = input_body;
     }
 
-    pub fn run(&self) {
+    pub async fn run(&self) {
         let mut year = Year::new(&self.year, &self.day, &self.input);
         let start_1 = std::time::Instant::now();
-        let p_1 = year.puzzle.part_one();
+        let p_1_answer = year.puzzle.part_one();
         let elapsed_1 = start_1.elapsed();
-        println!(" -- part one result is {}", p_1.color(Colors::YellowFg));
-        println!(" -- Time to run part one is {:?}", elapsed_1);
 
-        // we recreate it so clear out any state
+        println!(
+            " -- {} result {} and is {}",
+            "Part One".color(Colors::BlueFg),
+            self.get_answer_state(Parts::One, &p_1_answer).await,
+            p_1_answer.color(Colors::YellowFg)
+        );
+        println!(" -- Time to run part one is {:?}", elapsed_1);
+        self.store_answer(Parts::One, &p_1_answer).await;
+
+        // we recreate the puzzle to clear out any state
         let mut year = Year::new(&self.year, &self.day, &self.input);
         let start_2 = std::time::Instant::now();
-        let p_2 = year.puzzle.part_two();
+        let p_2_answer = year.puzzle.part_two();
         let elapsed_2 = start_2.elapsed();
-        if let Some(res) = p_2 {
-            println!(" -- part two result is {}", res.color(Colors::GreenFg));
+
+        if let Some(res) = p_2_answer {
+            println!(
+                " -- {}result {} and is {}",
+                "Part Two".color(Colors::BlueFg),
+                self.get_answer_state(Parts::Two, &res).await,
+                res.color(Colors::GreenFg)
+            );
             println!(" -- Time to run part two is {:?}", elapsed_2);
+            self.store_answer(Parts::Two, &res).await;
         }
+    }
+
+    async fn store_answer(&self, part: Parts, answer: &String) {
+        PuzzleAnswerRow::store_answer(&self.day, &self.year, &self.pool, part, answer).await;
+    }
+
+    async fn get_answer_state(&self, part: Parts, answer: &String) -> AnswerState {
+        PuzzleAnswerRow::get_answer_state(&self.day, &self.year, &self.pool, part, &answer).await
     }
 
     pub fn submit(&self) {

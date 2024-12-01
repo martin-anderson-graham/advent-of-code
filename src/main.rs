@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let puzzle_executor = PuzzleExecutor::new(puzzle_args, pool).await;
 
     // TODO
-    puzzle_executor.run();
+    puzzle_executor.run().await;
     // TODO
     puzzle_executor.submit();
 
