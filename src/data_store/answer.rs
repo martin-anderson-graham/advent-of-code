@@ -58,7 +58,7 @@ impl Display for AnswerState {
             f,
             "{}",
             match self {
-                AnswerState::New => "new".color(Colors::GreenFg),
+                AnswerState::New => "is new".color(Colors::GreenFg),
                 AnswerState::Exists => "exists".color(Colors::WhiteFg),
             }
         )
