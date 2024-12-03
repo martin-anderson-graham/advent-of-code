@@ -2,9 +2,11 @@ use colorized::{Color, Colors};
 use common::PuzzleParts;
 use day01::day01::Day01;
 use day02::day02::Day02;
+use day03::day03::Day03;
 
 mod day01;
 mod day02;
+mod day03;
 
 pub struct Year2024;
 
@@ -13,7 +15,7 @@ impl Year2024 {
         match day.as_str() {
             "1" => Box::new(Day01::new(input)),
             "2" => Box::new(Day02::new(input)),
-            // "3" =>Box::new(Day03::new(input)),
+            "3" =>Box::new(Day03::new(input)),
             // "4" =>Box::new(Day04::new(input)),
             // "5" =>Box::new(Day05::new(input)),
             // "6" =>Box::new(Day06::new(input)),
