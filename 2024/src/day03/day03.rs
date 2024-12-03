@@ -20,7 +20,7 @@ impl PuzzleParts for Day03 {
         for (i, _) in self.input.match_indices("mul(") {
             let first_number = self.input[i + 4..]
                 .chars()
-                .take_while(|c| c.to_string().parse::<usize>().is_ok())
+                .take_while(|c| c.is_numeric())
                 .map(|c| c.to_string())
                 .collect::<Vec<_>>()
                 .join("");
@@ -39,7 +39,7 @@ impl PuzzleParts for Day03 {
 
             let second_number = self.input[i + 4 + first_number.len() + 1..]
                 .chars()
-                .take_while(|c| c.to_string().parse::<usize>().is_ok())
+                .take_while(|c| c.is_numeric())
                 .map(|c| c.to_string())
                 .collect::<Vec<_>>()
                 .join("");
@@ -76,7 +76,7 @@ impl PuzzleParts for Day03 {
         for (i, _) in self.input.match_indices("mul(") {
             let first_number = self.input[i + 4..]
                 .chars()
-                .take_while(|c| c.to_string().parse::<usize>().is_ok())
+                .take_while(|c| c.is_numeric())
                 .map(|c| c.to_string())
                 .collect::<Vec<_>>()
                 .join("");
@@ -95,7 +95,7 @@ impl PuzzleParts for Day03 {
 
             let second_number = self.input[i + 4 + first_number.len() + 1..]
                 .chars()
-                .take_while(|c| c.to_string().parse::<usize>().is_ok())
+                .take_while(|c| c.is_numeric())
                 .map(|c| c.to_string())
                 .collect::<Vec<_>>()
                 .join("");
