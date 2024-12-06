@@ -238,26 +238,31 @@ impl PuzzleParts for Day06 {
     }
 
     fn part_two(&mut self) -> Option<String> {
+        let fresh_guard = self.guard.clone();
+        // we only need to place obstacles in visited squares
+        self.patrol();
+
+        let mut visited_hash: HashSet<Position> = HashSet::new();
+
+        self.guard
+            .visited
+            .clone()
+            .iter()
+            .for_each(|(pos, _)| { visited_hash.insert(pos.clone()); });
+
+        // reset the guard
+        self.guard = fresh_guard;
         Some(
-            self.grid
+            visited_hash
                 .iter()
-                .filter(|(pos, loc_type)| {
-                    match loc_type {
-                        // only empty spots can have obstacles placed, but not the original guard
-                        // position
-                        LocationType::Empty => {
-                            if **pos == self.guard.position {
-                                return false;
-                            };
-                            let mut new_grid = self.grid.clone();
-                            new_grid.insert((*pos).clone(), LocationType::Obstacle);
-                            self.is_loop(new_grid)
-                        }
-                        _ => false,
-                    }
+                .filter(|pos| {
+                    let mut new_grid = self.grid.clone();
+                    new_grid.insert(**pos, LocationType::Obstacle);
+                    self.is_loop(new_grid)
                 })
                 .count()
-                .to_string(),
+                
+            .to_string(),
         )
     }
 }
