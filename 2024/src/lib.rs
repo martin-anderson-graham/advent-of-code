@@ -4,11 +4,13 @@ use day01::day01::Day01;
 use day02::day02::Day02;
 use day03::day03::Day03;
 use day04::day04::Day04;
+use day05::day05::Day05;
 
 mod day01;
 mod day02;
 mod day03;
 mod day04;
+mod day05;
 
 pub struct Year2024;
 
@@ -19,7 +21,7 @@ impl Year2024 {
             "2" => Box::new(Day02::new(input)),
             "3" =>Box::new(Day03::new(input)),
             "4" =>Box::new(Day04::new(input)),
-            // "5" =>Box::new(Day05::new(input)),
+            "5" =>Box::new(Day05::new(input)),
             // "6" =>Box::new(Day06::new(input)),
             // "7" =>Box::new(Day07::new(input)),
             // "8" =>Box::new(Day08::new(input)),
