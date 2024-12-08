@@ -8,7 +8,8 @@ mod tests {
 
     #[test]
     fn part_1() {
-        let input = String::from("....#.....
+        let input = String::from(
+            "....#.....
 .........#
 ..........
 ..#.......
@@ -17,14 +18,16 @@ mod tests {
 .#..^.....
 ........#.
 #.........
-......#...");
-            let mut puzz = Day06::new(&input);
-            assert_eq!(puzz.part_one(), "41");
+......#...",
+        );
+        let mut puzz = Day06::new(&input);
+        assert_eq!(puzz.part_one(), "41");
     }
 
     #[test]
     fn part_2() {
-        let input = String::from("....#.....
+        let input = String::from(
+            "....#.....
 .........#
 ..........
 ..#.......
@@ -33,8 +36,9 @@ mod tests {
 .#..^.....
 ........#.
 #.........
-......#...");
-            let mut puzz = Day06::new(&input);
-            assert_eq!(puzz.part_two(), Some(String::from("6")));
+......#...",
+        );
+        let mut puzz = Day06::new(&input);
+        assert_eq!(puzz.part_two(), Some(String::from("6")));
     }
 }

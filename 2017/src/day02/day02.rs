@@ -4,12 +4,11 @@ pub struct Day02 {
     input: String,
 }
 impl Day02 {
- pub   fn new(input: &String) -> Self {
+    pub fn new(input: &String) -> Self {
         Self {
             input: input.clone(),
         }
     }
-    
 }
 
 impl PuzzleParts for Day02 {

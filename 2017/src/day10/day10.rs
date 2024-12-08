@@ -41,9 +41,14 @@ impl PuzzleParts for Day10 {
         }
 
         let dense_hash = self.get_dense_hash();
-        Some(dense_hash.iter().map(|n| format!("{:02x}", n)).collect::<Vec<_>>().join(""))
+        Some(
+            dense_hash
+                .iter()
+                .map(|n| format!("{:02x}", n))
+                .collect::<Vec<_>>()
+                .join(""),
+        )
     }
-
 }
 
 enum Parts {

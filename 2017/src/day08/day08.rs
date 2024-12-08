@@ -125,7 +125,8 @@ impl Instruction {
     }
 
     fn get_new_value(&self, target_register_value: isize) -> isize {
-                    self.action.get_new_value(target_register_value, self.action_operand)
+        self.action
+            .get_new_value(target_register_value, self.action_operand)
     }
 }
 
@@ -146,7 +147,6 @@ impl FromStr for Day08 {
 
             registers_max.insert(i.register.clone(), 0);
             registers_max.insert(i.condition_register.clone(), 0);
-
         });
 
         Ok(Self {
@@ -158,15 +158,17 @@ impl FromStr for Day08 {
 }
 
 impl Day08 {
-fn process(&mut self) {
+    fn process(&mut self) {
         self.instructions.iter().for_each(|i| {
             let cond_target_register = i.condition_register.clone();
             let cond_target_register_value = *self.registers.get(&cond_target_register).unwrap();
             if i.should_apply_change(cond_target_register_value) {
                 let action_target_register = i.register.clone();
-                let action_target_register_value = *self.registers.get(&action_target_register).unwrap();
+                let action_target_register_value =
+                    *self.registers.get(&action_target_register).unwrap();
                 let new_value = i.get_new_value(action_target_register_value);
-                self.registers.insert(action_target_register.clone(),new_value);
+                self.registers
+                    .insert(action_target_register.clone(), new_value);
 
                 let current_max = *self.registers_max.get(&action_target_register).unwrap();
                 if new_value > current_max {
@@ -174,7 +176,7 @@ fn process(&mut self) {
                 }
             }
         });
-}
+    }
 }
 impl Day08 {
     pub fn new(input: &String) -> Self {
@@ -192,5 +194,4 @@ impl PuzzleParts for Day08 {
         self.process();
         Some(self.registers_max.values().max().unwrap().to_string())
     }
-
 }

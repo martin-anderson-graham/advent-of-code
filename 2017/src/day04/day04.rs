@@ -7,7 +7,6 @@ pub struct Day04 {
 }
 
 impl Day04 {
-
     pub fn new(input: &String) -> Self {
         Day04 {
             input: input.clone(),
@@ -56,7 +55,7 @@ fn build_char_set(word: &str) -> HashMap<char, usize> {
 
 fn is_anagram(word: &str, words: &Vec<String>) -> bool {
     if words.len() == 0 {
-        return false
+        return false;
     }
     let word_hash = build_char_set(word);
     'outer: for w in words.iter() {
@@ -74,7 +73,7 @@ fn is_anagram(word: &str, words: &Vec<String>) -> bool {
                 None => continue 'outer,
             }
         }
-       return true
+        return true;
     }
     false
 }
@@ -84,13 +83,19 @@ mod tests_day04 {
     use crate::day04::day04::is_anagram;
 
     #[test]
-    fn is_anagram_test(){
+    fn is_anagram_test() {
         // assert_eq!(is_anagram("abcde", &vec![String::from("ecdab")]), true);
-        assert_eq!(is_anagram("nrmyllg", &vec![
-                String::from("dtjr"),
-                String::from("baxkj"),
-                String::from("lmnyrlg"),
-        ]), true);
+        assert_eq!(
+            is_anagram(
+                "nrmyllg",
+                &vec![
+                    String::from("dtjr"),
+                    String::from("baxkj"),
+                    String::from("lmnyrlg"),
+                ]
+            ),
+            true
+        );
     }
 }
 

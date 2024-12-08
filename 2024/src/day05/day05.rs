@@ -48,14 +48,12 @@ impl Day05 {
     }
 
     fn compare_update_items(&self, a: &String, b: &String) -> Ordering {
-        match self.ordering_rules.get(&(a.to_string(),b.to_string())) {
+        match self.ordering_rules.get(&(a.to_string(), b.to_string())) {
             Some(_) => Ordering::Less,
             None => Ordering::Equal,
         }
-
     }
 }
-
 
 impl PuzzleParts for Day05 {
     fn part_one(&mut self) -> String {

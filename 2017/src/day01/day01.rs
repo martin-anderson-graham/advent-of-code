@@ -6,12 +6,12 @@ pub struct Day01 {
 
 impl Day01 {
     pub fn new(input: &String) -> Self {
-        Self{
-            input: input.clone()
+        Self {
+            input: input.clone(),
         }
     }
 }
-impl PuzzleParts for Day01{
+impl PuzzleParts for Day01 {
     fn part_one(&mut self) -> String {
         part_one(&self.input).to_string()
     }

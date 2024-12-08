@@ -12,7 +12,6 @@ impl Day09 {
             cleaned_input: String::from(""),
         }
     }
-
 }
 
 impl PuzzleParts for Day09 {
@@ -24,7 +23,6 @@ impl PuzzleParts for Day09 {
     fn part_two(&mut self) -> Option<String> {
         Some(self.remove_garbage().to_string())
     }
-
 }
 
 impl Day09 {

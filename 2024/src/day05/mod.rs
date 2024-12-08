@@ -77,5 +77,4 @@ mod tests {
         let mut puzz = Day05::new(&input);
         assert_eq!(puzz.part_two(), Some(String::from("123")));
     }
-
 }

@@ -18,7 +18,7 @@ XXAMMXXAMA
 SMSMSASXSS
 SAXAMASAAA
 MAMMMXMMMM
-MXMXAXMASX"
+MXMXAXMASX",
         );
         let mut puzz = Day04::new(&input);
         assert_eq!(puzz.part_one(), "18");
@@ -36,7 +36,7 @@ XXAMMXXAMA
 SMSMSASXSS
 SAXAMASAAA
 MAMMMXMMMM
-MXMXAXMASX"
+MXMXAXMASX",
         );
         let mut puzz = Day04::new(&input);
         assert_eq!(puzz.part_two(), Some(String::from("9")));

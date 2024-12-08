@@ -37,7 +37,6 @@ impl PuzzleParts for Day07 {
                 .to_string(),
         )
     }
-
 }
 
 impl Day07 {

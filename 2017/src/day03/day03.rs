@@ -7,22 +7,21 @@ pub struct Day03 {
 }
 
 impl Day03 {
-
     pub fn new(input: &String) -> Self {
-        Day03{
+        Day03 {
             input: input.clone(),
         }
     }
 }
 
-impl PuzzleParts for Day03{
+impl PuzzleParts for Day03 {
     fn part_one(&mut self) -> String {
-       let result = part_one(&self.input); 
-       result.to_string()
-    } 
+        let result = part_one(&self.input);
+        result.to_string()
+    }
     fn part_two(&mut self) -> Option<String> {
-       let result = part_two(&self.input); 
-       Some(result.to_string())
+        let result = part_two(&self.input);
+        Some(result.to_string())
     }
 }
 
@@ -116,25 +115,25 @@ impl Board {
         }
         if let Some(val) = self
             .points
-            .get(&Coordinates::new(coordinates.x-1, coordinates.y - 1))
+            .get(&Coordinates::new(coordinates.x - 1, coordinates.y - 1))
         {
             result += val;
         }
         if let Some(val) = self
             .points
-            .get(&Coordinates::new(coordinates.x+1, coordinates.y + 1))
+            .get(&Coordinates::new(coordinates.x + 1, coordinates.y + 1))
         {
             result += val;
         }
         if let Some(val) = self
             .points
-            .get(&Coordinates::new(coordinates.x+1, coordinates.y - 1))
+            .get(&Coordinates::new(coordinates.x + 1, coordinates.y - 1))
         {
             result += val;
         }
         if let Some(val) = self
             .points
-            .get(&Coordinates::new(coordinates.x-1, coordinates.y + 1))
+            .get(&Coordinates::new(coordinates.x - 1, coordinates.y + 1))
         {
             result += val;
         }

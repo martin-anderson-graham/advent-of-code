@@ -244,11 +244,9 @@ impl PuzzleParts for Day06 {
 
         let mut visited_hash: HashSet<Position> = HashSet::new();
 
-        self.guard
-            .visited
-            .clone()
-            .iter()
-            .for_each(|(pos, _)| { visited_hash.insert(pos.clone()); });
+        self.guard.visited.clone().iter().for_each(|(pos, _)| {
+            visited_hash.insert(pos.clone());
+        });
 
         // reset the guard
         self.guard = fresh_guard;
@@ -261,8 +259,7 @@ impl PuzzleParts for Day06 {
                     self.is_loop(new_grid)
                 })
                 .count()
-                
-            .to_string(),
+                .to_string(),
         )
     }
 }

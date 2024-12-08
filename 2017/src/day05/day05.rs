@@ -8,13 +8,12 @@ pub struct Day05 {
 }
 
 impl Day05 {
- pub   fn new(input: &String) -> Self {
+    pub fn new(input: &String) -> Self {
         Self {
             cursor_index: 0,
             instructions: Day05::parse(input),
         }
     }
-
 }
 
 impl PuzzleParts for Day05 {
@@ -25,7 +24,8 @@ impl PuzzleParts for Day05 {
             let jump = match self.instructions.get(&current_index) {
                 None => return step_count.to_string(),
                 Some(val) => val,
-            }.clone();
+            }
+            .clone();
             step_count += 1;
             // increment before moving
             self.instructions.insert(*current_index, jump + 1);
@@ -39,12 +39,13 @@ impl PuzzleParts for Day05 {
             let jump = match self.instructions.get(&current_index) {
                 None => return Some(step_count.to_string()),
                 Some(val) => val,
-            }.clone();
+            }
+            .clone();
             step_count += 1;
             // increment before moving
             match jump >= 3 {
-                true=>self.instructions.insert(*current_index, jump - 1),
-                false=>self.instructions.insert(*current_index, jump + 1)
+                true => self.instructions.insert(*current_index, jump - 1),
+                false => self.instructions.insert(*current_index, jump + 1),
             };
             self.cursor_index += jump;
         }
@@ -52,12 +53,11 @@ impl PuzzleParts for Day05 {
 }
 
 impl Day05 {
-    fn parse(input: &String) ->  HashMap<isize, isize> {
+    fn parse(input: &String) -> HashMap<isize, isize> {
         let mut instructions = HashMap::new();
         for (index, value) in input.trim().split_whitespace().enumerate() {
             instructions.insert(index.try_into().unwrap(), value.parse::<isize>().unwrap());
         }
         return instructions;
     }
-
 }
