@@ -1,3 +1,8 @@
+pub enum Part {
+    One,
+    Two,
+}
+
 #[derive(Debug)]
 pub struct ParsePuzzleErr;
 
