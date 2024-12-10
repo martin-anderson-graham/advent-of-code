@@ -3,6 +3,18 @@ pub enum Part {
     Two,
 }
 
+#[derive(Debug, Clone, Hash, PartialEq, Eq)]
+pub struct Position {
+    pub row: isize,
+    pub col: isize,
+}
+
+impl Position {
+    pub fn new(row: isize, col: isize) -> Self {
+        Self { row, col }
+    }
+}
+
 #[derive(Debug)]
 pub struct ParsePuzzleErr;
 
