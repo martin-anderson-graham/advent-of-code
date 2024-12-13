@@ -12,6 +12,7 @@ use day09::day09::Day09;
 use day10::day10::Day10;
 use day11::day11::Day11;
 use day12::day12::Day12;
+use day13::day13::Day13;
 
 mod day01;
 mod day02;
@@ -25,6 +26,7 @@ mod day09;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 
 pub struct Year2024;
 
@@ -43,6 +45,7 @@ impl Year2024 {
             "10" => Box::new(Day10::new(input)),
             "11" => Box::new(Day11::new(input)),
             "12" => Box::new(Day12::new(input)),
+            "13" => Box::new(Day13::new(input)),
             _ => {
                 println!(
                     " -- invalid day value was passed - {}",
