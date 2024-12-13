@@ -9,6 +9,14 @@ pub struct Position {
     pub col: isize,
 }
 
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
+pub enum CardinalDirection {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
 impl Position {
     pub fn new(row: isize, col: isize) -> Self {
         Self { row, col }
